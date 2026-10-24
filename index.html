@@ -25,7 +25,6 @@
         }
 
         .container { padding: 20px; }
-
         h1 { font-size: 24px; margin: 0 0 5px 0; font-weight: 700; }
         .subtitle { color: var(--text-muted); font-size: 14px; margin: 0 0 20px 0; }
 
@@ -78,7 +77,7 @@
             color: white; font-size: 15px; outline: none;
         }
         .form-input:focus { border-color: var(--accent); }
-        textarea.form-input { resize: none; height: 100px; }
+        textarea.form-input { resize: none; height: 80px; }
         .btn-submit {
             width: 100%; padding: 16px; border-radius: 12px;
             background-color: var(--accent); color: #000;
@@ -95,13 +94,24 @@
         }
         .toggle-btn.online { background-color: #22c55e; border-color: #22c55e; color: white; }
         
-        .empty-state { text-align: center; color: var(--text-muted); margin-top: 40px; }
         .back-btn {
             background: none; border: none; color: var(--accent);
             font-size: 16px; cursor: pointer; padding: 0; margin-bottom: 15px;
         }
 
-        /* Стили для карточки заказа у мастера */
+        /* Вкладки внутри кабинета мастера */
+        .master-tabs {
+            display: flex; gap: 10px; margin-bottom: 20px;
+        }
+        .master-tab {
+            flex: 1; text-align: center; padding: 10px;
+            background-color: var(--card-bg); border-radius: 8px;
+            font-size: 14px; cursor: pointer; color: var(--text-muted);
+        }
+        .master-tab.active {
+            background-color: var(--accent); color: #000; font-weight: bold;
+        }
+
         .order-card {
             background-color: var(--card-bg);
             border-radius: 12px;
@@ -109,23 +119,35 @@
             margin-bottom: 12px;
             border-left: 4px solid var(--accent);
         }
+        .order-card.in-progress { border-left-color: #22c55e; }
         .order-card h3 { margin: 0 0 8px 0; font-size: 16px; color: var(--accent); }
+        .order-card.in-progress h3 { color: #22c55e; }
         .order-card p { margin: 4px 0; font-size: 14px; color: #ccc; }
         .order-price { font-size: 18px; font-weight: bold; color: white; margin: 10px 0 !important; }
+        
+        .action-buttons { display: flex; gap: 8px; margin-top: 12px; }
         .btn-accept {
             background-color: #22c55e; color: white; border: none;
-            padding: 10px; border-radius: 8px; width: 100%;
-            font-weight: bold; cursor: pointer; margin-top: 10px;
+            padding: 12px; border-radius: 8px; flex: 1;
+            font-weight: bold; cursor: pointer;
+        }
+        .btn-whatsapp {
+            background-color: #25D366; color: white; border: none;
+            padding: 12px; border-radius: 8px; flex: 1;
+            font-weight: bold; cursor: pointer; text-align: center;
+        }
+        .btn-2gis {
+            background-color: #1e88e5; color: white; border: none;
+            padding: 12px; border-radius: 8px; flex: 1;
+            font-weight: bold; cursor: pointer; text-align: center;
+        }
+        .btn-complete {
+            background-color: #ef4444; color: white; border: none;
+            padding: 12px; border-radius: 8px; width: 100%;
+            font-weight: bold; cursor: pointer; margin-top: 8px;
         }
 
-        .whatsapp-btn {
-            position: fixed; bottom: 90px; right: 20px;
-            background-color: #25D366; color: white; border: none;
-            width: 50px; height: 50px; border-radius: 50%;
-            font-size: 24px; display: flex; align-items: center;
-            justify-content: center; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
-            cursor: pointer; z-index: 100;
-        }
+        .empty-state { text-align: center; color: var(--text-muted); margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -160,23 +182,19 @@
                 <h3>Авто</h3>
                 <p>Автоэлектрик, помощь</p>
             </div>
-            <div class="card" onclick="openOrderForm('Замки')">
-                <div class="icon-circle">🔑</div>
-                <h3>Замки</h3>
-                <p>Вскрытие, замена</p>
-            </div>
-            <div class="card" onclick="openOrderForm('Техника')">
-                <div class="icon-circle">📺</div>
-                <h3>Техника</h3>
-                <p>Стиралки, холодильники</p>
-            </div>
         </div>
     </div>
 
+    <!-- ФОРМА ЗАКАЗА -->
     <div id="view-order-form" class="container" style="display: none;">
         <button class="back-btn" onclick="switchTab('client')">← Назад</button>
         <h1 id="form-title">Заказ: Сантехник</h1>
         <p class="subtitle">Заполните детали, чтобы мастера откликнулись</p>
+
+        <div class="form-group">
+            <label>Ваш номер телефона (для связи)</label>
+            <input type="tel" id="input-phone" class="form-input" placeholder="+7 777 123 45 67">
+        </div>
 
         <div class="form-group">
             <label>Адрес (Город, улица, дом, кв)</label>
@@ -196,25 +214,26 @@
         <button class="btn-submit" onclick="submitOrder()">Опубликовать заказ</button>
     </div>
 
+    <!-- КАБИНЕТ МАСТЕРА -->
     <div id="view-master" class="container" style="display: none;">
         <h1>Кабинет мастера</h1>
-        <p class="subtitle">Управляйте статусом и принимайте заказы</p>
-
+        
         <button id="status-btn" class="toggle-btn" onclick="toggleOnlineStatus()">
             🔴 Я офлайн (Нажмите, чтобы выйти на смену)
         </button>
 
-        <!-- Сюда будут добавляться заказы -->
-        <div id="master-orders-list">
-            <div class="empty-state">
-                <h3>Пока нет новых заказов</h3>
-                <p>Как только клиент создаст заказ, он появится здесь.</p>
-            </div>
+        <!-- Вкладки мастера -->
+        <div class="master-tabs">
+            <div class="master-tab active" id="tab-new" onclick="switchMasterTab('new')">Новые заказы</div>
+            <div class="master-tab" id="tab-progress" onclick="switchMasterTab('progress')">В работе</div>
         </div>
+
+        <!-- Списки заказов -->
+        <div id="new-orders-list"></div>
+        <div id="active-orders-list" style="display: none;"></div>
     </div>
 
-    <button class="whatsapp-btn" onclick="contactWhatsApp()">💬</button>
-
+    <!-- Нижнее меню -->
     <div class="bottom-nav">
         <div id="nav-client" class="nav-item active" onclick="switchTab('client')">
             <div class="nav-icon">🔍</div>
@@ -224,28 +243,20 @@
             <div class="nav-icon">🔧</div>
             <span>Мастер</span>
         </div>
-        <div class="nav-item" onclick="tg.showAlert('Служба поддержки: @sheber_support')">
-            <div class="nav-icon">❓</div>
-            <span>Поддержка</span>
-        </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        const user = tg.initDataUnsafe?.user || { id: 'test', first_name: 'Клиент' };
-        
         let currentCategory = "";
         let isMasterOnline = false;
+        let currentMasterTab = 'new'; // 'new' или 'progress'
 
-        // Функция для переключения экранов
         function switchTab(tab) {
             tg.HapticFeedback.impactOccurred('light');
-            
             document.getElementById('view-client').style.display = 'none';
             document.getElementById('view-order-form').style.display = 'none';
             document.getElementById('view-master').style.display = 'none';
-
             document.getElementById('nav-client').classList.remove('active');
             document.getElementById('nav-master').classList.remove('active');
 
@@ -255,103 +266,157 @@
             } else if (tab === 'master') {
                 document.getElementById('view-master').style.display = 'block';
                 document.getElementById('nav-master').classList.add('active');
-                renderMasterOrders(); // Обновляем список при входе
+                renderMasterOrders();
             }
+        }
+
+        function switchMasterTab(tab) {
+            currentMasterTab = tab;
+            document.getElementById('tab-new').classList.remove('active');
+            document.getElementById('tab-progress').classList.remove('active');
+            
+            if (tab === 'new') {
+                document.getElementById('tab-new').classList.add('active');
+                document.getElementById('new-orders-list').style.display = 'block';
+                document.getElementById('active-orders-list').style.display = 'none';
+            } else {
+                document.getElementById('tab-progress').classList.add('active');
+                document.getElementById('new-orders-list').style.display = 'none';
+                document.getElementById('active-orders-list').style.display = 'block';
+            }
+            renderMasterOrders();
         }
 
         function openOrderForm(category) {
             tg.HapticFeedback.impactOccurred('medium');
             currentCategory = category;
-            
             document.getElementById('view-client').style.display = 'none';
             document.getElementById('view-master').style.display = 'none';
             document.getElementById('view-order-form').style.display = 'block';
-            
             document.getElementById('form-title').innerText = "Заказ: " + category;
         }
 
-        // СОЗДАНИЕ ЗАКАЗА (Сохранение в память браузера)
         function submitOrder() {
+            const phone = document.getElementById('input-phone').value;
             const address = document.getElementById('input-address').value;
             const desc = document.getElementById('input-desc').value;
             const price = document.getElementById('input-price').value;
 
-            if (!address || !price) {
-                tg.showAlert("Пожалуйста, заполните адрес и цену!");
+            if (!phone || !address || !price) {
+                tg.showAlert("Пожалуйста, заполните телефон, адрес и цену!");
                 return;
             }
 
             const newOrder = {
-                id: Date.now(), // Уникальный ID заказа
+                id: Date.now().toString(),
                 category: currentCategory,
+                phone: phone,
                 address: address,
                 desc: desc,
-                price: price
+                price: price,
+                status: 'searching' // Новый статус
             };
 
-            // Берем текущие заказы из памяти (или создаем пустой массив)
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders')) || [];
-            savedOrders.push(newOrder); // Добавляем новый
-            localStorage.setItem('sheber_orders', JSON.stringify(savedOrders)); // Сохраняем
+            savedOrders.push(newOrder); 
+            localStorage.setItem('sheber_orders', JSON.stringify(savedOrders)); 
 
-            tg.showAlert(`✅ Заказ на "${currentCategory}" опубликован!\nМастера рядом получили уведомление.`);
+            tg.showAlert(`✅ Заказ на "${currentCategory}" опубликован!`);
             
-            // Очищаем форму
+            document.getElementById('input-phone').value = '';
             document.getElementById('input-address').value = '';
             document.getElementById('input-desc').value = '';
             document.getElementById('input-price').value = '';
-            
             switchTab('client');
         }
 
-        // ОТОБРАЖЕНИЕ ЗАКАЗОВ У МАСТЕРА
         function renderMasterOrders() {
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders')) || [];
-            const listContainer = document.getElementById('master-orders-list');
+            const newList = document.getElementById('new-orders-list');
+            const activeList = document.getElementById('active-orders-list');
 
-            if (savedOrders.length === 0) {
-                listContainer.innerHTML = `
-                    <div class="empty-state">
-                        <h3>Пока нет новых заказов</h3>
-                        <p>Как только клиент создаст заказ, он появится здесь.</p>
-                    </div>`;
-                return;
-            }
+            const newOrders = savedOrders.filter(o => o.status === 'searching');
+            const activeOrders = savedOrders.filter(o => o.status === 'accepted');
 
-            // Генерируем HTML для каждого заказа
-            let html = '';
-            savedOrders.forEach(order => {
-                html += `
+            // Рендер новых
+            if (newOrders.length === 0) {
+                newList.innerHTML = `<div class="empty-state">Нет новых заказов</div>`;
+            } else {
+                newList.innerHTML = newOrders.map(order => `
                     <div class="order-card">
                         <h3>${order.category}</h3>
-                        <p>📍 Адрес: ${order.address}</p>
-                        <p>📝 Описание: ${order.desc || 'Без описания'}</p>
                         <p class="order-price">💰 ${order.price} ₸</p>
-                        <button class="btn-accept" onclick="acceptOrder(${order.id})">Принять заказ</button>
+                        <p>📍 ${order.address}</p>
+                        <button class="btn-accept" onclick="acceptOrder('${order.id}')">Принять заказ</button>
                     </div>
-                `;
-            });
-            listContainer.innerHTML = html;
+                `).join('');
+            }
+
+            // Рендер в работе
+            if (activeOrders.length === 0) {
+                activeList.innerHTML = `<div class="empty-state">У вас нет активных заказов</div>`;
+            } else {
+                activeList.innerHTML = activeOrders.map(order => {
+                    // Очищаем номер телефона от лишних символов для WhatsApp
+                    let cleanPhone = order.phone.replace(/\D/g,''); 
+                    // Кодируем адрес для 2ГИС
+                    let encodedAddress = encodeURIComponent(order.address + " Казахстан");
+
+                    return `
+                    <div class="order-card in-progress">
+                        <h3>${order.category} (В работе)</h3>
+                        <p class="order-price">💰 ${order.price} ₸</p>
+                        <p>📍 ${order.address}</p>
+                        <p>📞 ${order.phone}</p>
+                        <p>📝 ${order.desc || 'Без описания'}</p>
+                        
+                        <div class="action-buttons">
+                            <button class="btn-whatsapp" onclick="openWhatsApp('${cleanPhone}', '${order.category}')">WhatsApp</button>
+                            <button class="btn-2gis" onclick="open2GIS('${encodedAddress}')">2ГИС</button>
+                        </div>
+                        <button class="btn-complete" onclick="completeOrder('${order.id}')">Завершить заказ</button>
+                    </div>
+                    `;
+                }).join('');
+            }
         }
 
-        // ПРИНЯТИЕ ЗАКАЗА МАСТЕРОМ
         function acceptOrder(orderId) {
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders')) || [];
-            
-            // Удаляем заказ из списка свободных
-            savedOrders = savedOrders.filter(order => order.id !== orderId);
+            // Меняем статус на "принят"
+            savedOrders = savedOrders.map(o => o.id === orderId ? {...o, status: 'accepted'} : o);
             localStorage.setItem('sheber_orders', JSON.stringify(savedOrders));
 
             tg.HapticFeedback.notificationOccurred('success');
-            tg.showAlert("✅ Вы приняли заказ! Свяжитесь с клиентом.");
+            tg.showAlert("✅ Заказ принят! Детали и контакты появились во вкладке 'В работе'.");
             
-            renderMasterOrders(); // Обновляем экран
+            // Автоматически переключаем на вкладку "В работе"
+            switchMasterTab('progress');
+        }
+
+        function completeOrder(orderId) {
+            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders')) || [];
+            // Удаляем из базы
+            savedOrders = savedOrders.filter(o => o.id !== orderId);
+            localStorage.setItem('sheber_orders', JSON.stringify(savedOrders));
+
+            tg.showAlert("✅ Заказ завершен! Спасибо за работу.");
+            renderMasterOrders();
+        }
+
+        function openWhatsApp(phone, category) {
+            const text = encodeURIComponent(`Здравствуйте! Я мастер по заказу (${category}) из приложения Sheber. Когда мне подъехать?`);
+            tg.openLink(`https://wa.me/${phone}?text=${text}`);
+        }
+
+        function open2GIS(address) {
+            // Ссылка открывает приложение 2ГИС на телефоне или веб-версию
+            tg.openLink(`https://2gis.kz/search/${address}`);
         }
 
         function toggleOnlineStatus() {
             const btn = document.getElementById('status-btn');
             isMasterOnline = !isMasterOnline;
-
             if (isMasterOnline) {
                 tg.HapticFeedback.notificationOccurred('success');
                 btn.classList.add('online');
@@ -362,12 +427,6 @@
                 btn.classList.remove('online');
                 btn.innerText = "🔴 Я офлайн (Нажмите, чтобы выйти на смену)";
             }
-        }
-
-        function contactWhatsApp() {
-            const phone = "77011234567"; 
-            const text = encodeURIComponent("Здравствуйте! Нужна помощь мастера через Sheber.");
-            tg.openLink(`https://wa.me/${phone}?text=${text}`);
         }
     </script>
 </body>
