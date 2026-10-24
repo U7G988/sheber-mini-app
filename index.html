@@ -8,22 +8,16 @@
     <script src="https://mapgl.2gis.com/api/js/v1"></script>
     <style>
         :root {
-            --bg-body: #0f0f11;
-            --bg-card: #1c1c1e;
-            --bg-input: #2c2c2e;
-            --text-main: #ffffff;
-            --text-muted: #8e8e93;
-            --accent: #FFCC00;
-            --accent-pressed: #E5B800;
-            --success: #34C759;
-            --danger: #FF3B30;
+            --bg-body: #0f0f11; --bg-card: #1c1c1e; --bg-input: #2c2c2e;
+            --text-main: #ffffff; --text-muted: #8e8e93;
+            --accent: #FFCC00; --accent-pressed: #E5B800;
+            --success: #34C759; --danger: #FF3B30;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
-            margin: 0; padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+            margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-body); color: var(--text-main);
             padding-bottom: 90px; -webkit-font-smoothing: antialiased; overflow-x: hidden; 
         }
@@ -32,7 +26,14 @@
         .container.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         
-        h1 { font-size: 26px; margin: 0 0 6px 0; font-weight: 800; letter-spacing: -0.5px; }
+        /* Шапка с заголовком и кнопкой смены роли */
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        h1 { font-size: 26px; margin: 0; font-weight: 800; letter-spacing: -0.5px; }
+        .btn-switch-role { 
+            background-color: var(--bg-card); border: 1px solid rgba(255,255,255,0.1); 
+            color: var(--text-muted); padding: 8px 12px; border-radius: 10px; 
+            font-size: 13px; cursor: pointer; font-weight: 600; 
+        }
         .subtitle { color: var(--text-muted); font-size: 15px; margin: 0 0 24px 0; }
 
         /* Сетка категорий */
@@ -43,18 +44,13 @@
             border: 1px solid rgba(255,255,255,0.03); display: flex; flex-direction: column;
         }
         .card:active { transform: scale(0.97); background-color: #2c2c2e; }
-        .icon-box {
-            width: 44px; height: 44px; background-color: rgba(255, 204, 0, 0.15);
-            border-radius: 12px; display: flex; align-items: center;
-            justify-content: center; font-size: 22px; margin-bottom: 14px;
-        }
+        .icon-box { width: 44px; height: 44px; background-color: rgba(255, 204, 0, 0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 14px; }
         .card h3 { margin: 0 0 4px 0; font-size: 16px; font-weight: 700; }
         .card p { margin: 0; font-size: 13px; color: var(--text-muted); line-height: 1.3; }
 
         /* Формы */
         .back-btn { background: none; border: none; color: var(--text-muted); font-size: 16px; font-weight: 600; cursor: pointer; padding: 0 0 15px 0; display: flex; align-items: center; gap: 5px; }
         .back-btn:hover { color: var(--accent); }
-        
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
         .form-input {
@@ -72,36 +68,17 @@
         }
 
         .address-row { display: flex; gap: 10px; }
-        .btn-map {
-            background-color: var(--bg-card); border: 1px solid rgba(255,255,255,0.05);
-            color: white; border-radius: 14px; padding: 0 16px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px; cursor: pointer;
-        }
-        
+        .btn-map { background-color: var(--bg-card); border: 1px solid rgba(255,255,255,0.05); color: white; border-radius: 14px; padding: 0 16px; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; }
         .address-details { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 8px; }
         .address-details input { padding: 12px; font-size: 14px; }
 
-        .btn-upload {
-            width: 100%; padding: 16px; border-radius: 14px;
-            background-color: var(--bg-card); border: 1px dashed rgba(255,255,255,0.2);
-            color: white; font-size: 15px; font-weight: 600; cursor: pointer; text-align: center;
-        }
+        .btn-upload { width: 100%; padding: 16px; border-radius: 14px; background-color: var(--bg-card); border: 1px dashed rgba(255,255,255,0.2); color: white; font-size: 15px; font-weight: 600; cursor: pointer; text-align: center; }
         #photo-preview { display: none; width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px; margin-top: 10px; }
 
-        .btn-submit {
-            width: 100%; padding: 18px; border-radius: 16px;
-            background-color: var(--accent); color: #000;
-            font-weight: 700; font-size: 17px; border: none; cursor: pointer; margin-top: 10px;
-        }
+        .btn-submit { width: 100%; padding: 18px; border-radius: 16px; background-color: var(--accent); color: #000; font-weight: 700; font-size: 17px; border: none; cursor: pointer; margin-top: 10px; }
 
         /* Кабинет мастера */
-        .toggle-btn {
-            width: 100%; padding: 16px; border-radius: 16px;
-            background-color: var(--bg-card); color: white;
-            font-size: 16px; border: 1px solid rgba(255,255,255,0.05); 
-            margin-bottom: 20px; cursor: pointer; font-weight: 600; transition: all 0.3s;
-        }
+        .toggle-btn { width: 100%; padding: 16px; border-radius: 16px; background-color: var(--bg-card); color: white; font-size: 16px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
         .toggle-btn.online { background-color: rgba(52, 199, 89, 0.15); border-color: var(--success); color: var(--success); }
 
         .master-tabs { display: flex; background-color: var(--bg-card); border-radius: 12px; padding: 4px; margin-bottom: 20px; }
@@ -118,38 +95,24 @@
         .action-buttons { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
         .btn-accept { background-color: var(--accent); color: #000; border: none; padding: 14px; border-radius: 12px; flex: 1; font-weight: 700; font-size: 15px; cursor: pointer; width: 100%; }
         
-        /* Кнопки связи для мастера */
-        .btn-contact { 
-            background-color: var(--bg-input); color: white; border: none; padding: 14px; 
-            border-radius: 12px; flex: 1; font-weight: 600; font-size: 14px; cursor: pointer; 
-            text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px;
-        }
+        .btn-contact { background-color: var(--bg-input); color: white; border: none; padding: 14px; border-radius: 12px; flex: 1; font-weight: 600; font-size: 14px; cursor: pointer; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-call { background-color: #1e88e5; }
         .btn-whatsapp { background-color: #25D366; }
         .btn-map-route { background-color: var(--accent); color: #000; }
 
         .btn-complete { background-color: rgba(255, 59, 48, 0.15); color: var(--danger); border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 600; cursor: pointer; margin-top: 10px; }
-        
         .empty-state { text-align: center; color: var(--text-muted); margin-top: 30px; font-size: 15px; }
 
         /* Экран регистрации */
         #view-register { padding-top: 30px; }
-        .role-btn {
-            background-color: var(--bg-card); border: 2px solid transparent; border-radius: 18px;
-            padding: 24px; margin-bottom: 16px; text-align: center; cursor: pointer;
-        }
+        .role-btn { background-color: var(--bg-card); border: 2px solid transparent; border-radius: 18px; padding: 24px; margin-bottom: 16px; text-align: center; cursor: pointer; }
         .role-btn:active, .role-btn.selected { border-color: var(--accent); background-color: rgba(255, 204, 0, 0.05); }
         .role-icon { font-size: 48px; margin-bottom: 12px; }
         .role-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
         .role-desc { font-size: 14px; color: var(--text-muted); }
 
         /* Нижнее меню */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(15, 15, 17, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border-top: 1px solid rgba(255,255,255,0.08);
-            display: flex; justify-content: space-around; padding: 12px 0 30px 0; z-index: 100; display: none;
-        }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 15, 17, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-around; padding: 12px 0 30px 0; z-index: 100; display: none; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 11px; font-weight: 500; cursor: pointer; flex: 1; }
         .nav-item.active { color: var(--accent); }
         .nav-icon { font-size: 24px; margin-bottom: 4px; }
@@ -165,10 +128,8 @@
         .sheet-handle { width: 40px; height: 4px; background-color: #555; border-radius: 2px; margin: 0 auto 15px auto; }
         .map-address-text { font-size: 16px; margin-bottom: 20px; text-align: center; font-weight: 500; }
 
-        /* Статус клиента */
         .status-box { background-color: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3); border-radius: 12px; padding: 16px; margin-top: 12px; }
         .status-title { color: var(--success); font-size: 16px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
-        .status-desc { color: var(--text-main); font-size: 14px; }
     </style>
 </head>
 <body>
@@ -207,7 +168,10 @@
 
     <!-- ГЛАВНЫЙ ЭКРАН КЛИЕНТА -->
     <div id="view-client" class="container">
-        <h1>Что починить?</h1>
+        <div class="header-row">
+            <h1>Что починить?</h1>
+            <button class="btn-switch-role" onclick="resetRole()">🔄 Сменить роль</button>
+        </div>
         <p class="subtitle">Выберите категорию — мастера увидят ваш заказ</p>
         <div class="grid">
             <div class="card" onclick="openOrderForm('Сантехник')"><div class="icon-box">🔧</div><h3>Сантехник</h3><p>Краны, трубы, засоры</p></div>
@@ -223,8 +187,11 @@
 
     <!-- МОИ ЗАКАЗЫ КЛИЕНТА -->
     <div id="view-client-orders" class="container">
-        <h1>Мои заказы</h1>
-        <div id="client-orders-list"></div>
+        <div class="header-row">
+            <h1>Мои заказы</h1>
+            <button class="btn-switch-role" onclick="resetRole()">🔄 Сменить роль</button>
+        </div>
+        <div id="client-orders-list" style="margin-top: 20px;"></div>
     </div>
 
     <!-- ФОРМА ЗАКАЗА -->
@@ -281,8 +248,12 @@
 
     <!-- КАБИНЕТ МАСТЕРА -->
     <div id="view-master" class="container">
-        <h1>Кабинет мастера</h1>
-        <button id="status-btn" class="toggle-btn" onclick="toggleOnlineStatus()">🔴 Я офлайн (Нажмите, чтобы выйти)</button>
+        <div class="header-row">
+            <h1>Кабинет мастера</h1>
+            <button class="btn-switch-role" onclick="resetRole()">🔄 Сменить роль</button>
+        </div>
+        
+        <button id="status-btn" class="toggle-btn" style="margin-top: 20px;" onclick="toggleOnlineStatus()">🔴 Я офлайн (Нажмите, чтобы выйти)</button>
         
         <div class="master-tabs">
             <div class="master-tab active" id="tab-new" onclick="switchMasterTab('new')">Новые заказы</div>
@@ -309,7 +280,6 @@
 
     <!-- НИЖНЕЕ МЕНЮ -->
     <div class="bottom-nav" id="main-nav">
-        <!-- Эти вкладки будут показываться ТОЛЬКО клиенту -->
         <div id="nav-client-block" style="display: flex; width: 100%;">
             <div id="nav-client" class="nav-item" onclick="switchTab('client-home')">
                 <div class="nav-icon">🔍</div><span>Главная</span>
@@ -318,8 +288,6 @@
                 <div class="nav-icon">📋</div><span>Мои заказы</span>
             </div>
         </div>
-        
-        <!-- Эта вкладка будет показываться ТОЛЬКО мастеру -->
         <div id="nav-master-block" style="display: none; width: 100%;">
             <div id="nav-master" class="nav-item" onclick="switchTab('master')">
                 <div class="nav-icon">🔧</div><span>Панель мастера</span>
@@ -331,6 +299,10 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         
+        // ВКЛЮЧИТЕ ЭТО ДЛЯ ТЕСТА, ЧТОБЫ МАСТЕР ВИДЕЛ СВОИ ЖЕ ЗАКАЗЫ
+        // ПЕРЕД ЗАПУСКОМ В РЕАЛЬНУЮ ЖИЗНЬ ПОСТАВЬТЕ false
+        const TEST_MODE = true; 
+
         const MY_USER_ID = tg.initDataUnsafe?.user?.id || 'test_' + Math.floor(Math.random() * 1000);
         let currentUserRole = localStorage.getItem('sheber_role') || null; 
         let currentCategory = "";
@@ -358,7 +330,21 @@
         applyPhoneMask(document.getElementById('input-phone'));
         applyPhoneMask(document.getElementById('reg-master-phone'));
 
-        // --- РЕГИСТРАЦИЯ И РОЛИ ---
+        // --- СМЕНА РОЛИ ---
+        function resetRole() {
+            if(confirm("Сменить роль? (Вернемся на экран выбора)")) {
+                localStorage.removeItem('sheber_role');
+                currentUserRole = null;
+                // Очищаем поля при выходе
+                document.getElementById('reg-master-name').value = '';
+                document.getElementById('reg-master-phone').value = '';
+                document.getElementById('role-selection').style.display = 'block';
+                document.getElementById('master-reg-form').style.display = 'none';
+                switchTab('register');
+            }
+        }
+
+        // --- РЕГИСТРАЦИЯ ---
         function initApp() {
             if (!currentUserRole) {
                 switchTab('register');
@@ -369,7 +355,6 @@
         }
 
         function setupRoleUI(role) {
-            // Скрываем все вкладки меню
             document.getElementById('nav-client-block').style.display = 'none';
             document.getElementById('nav-master-block').style.display = 'none';
 
@@ -409,6 +394,7 @@
             setupRoleUI(role);
         }
 
+        // --- НАВИГАЦИЯ ---
         function switchTab(tab) {
             tg.HapticFeedback.impactOccurred('light');
             window.scrollTo(0, 0); 
@@ -614,22 +600,24 @@
             }).join('');
         }
 
-        // Имитация карты для клиента
         function showClientTrackingMap() {
-            tg.showAlert("📍 Открываем карту...\n\n(В реальном приложении здесь будет карта с движущимся мастером и временем прибытия, для этого нужен сервер)");
-            // Для красоты можно было бы открыть 2ГИС с маршрутом, но пока просто покажем уведомление
+            tg.showAlert("📍 Открываем карту...\n\n(В реальном приложении здесь будет карта с движущимся мастером)");
         }
 
         function renderMasterOrders() {
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
+            
+            // В тестовом режиме показываем ВСЕ заказы. В реальном - только чужие.
+            const availableForMe = TEST_MODE ? savedOrders : savedOrders.filter(o => o.clientId !== MY_USER_ID);
+
             const newList = document.getElementById('new-orders-list');
             const activeList = document.getElementById('active-orders-list');
 
-            const newOrders = savedOrders.filter(o => o.status === 'searching');
-            const activeOrders = savedOrders.filter(o => o.status === 'accepted' && o.masterId === MY_USER_ID);
+            const newOrders = availableForMe.filter(o => o.status === 'searching');
+            const activeOrders = availableForMe.filter(o => o.status === 'accepted' && o.masterId === MY_USER_ID);
 
             if (newOrders.length === 0) {
-                newList.innerHTML = `<div class="empty-state">Нет новых заказов.<br><i>*Создайте заказ с другого аккаунта для теста.</i></div>`;
+                newList.innerHTML = `<div class="empty-state">Нет новых заказов.</div>`;
             } else {
                 newList.innerHTML = newOrders.map(order => `
                     <div class="order-card">
@@ -654,13 +642,11 @@
                         ${order.photo ? `<img src="${order.photo}" class="order-photo">` : ''}
                         <p>📍 ${order.address}</p>
                         
-                        <!-- Блок связи с клиентом -->
                         <div class="action-buttons" style="margin-top: 15px;">
                             <a href="tel:+${cleanPhone}" class="btn-contact btn-call">📞 Позвонить</a>
                             <a href="https://wa.me/${cleanPhone}" target="_blank" class="btn-contact btn-whatsapp">💬 WhatsApp</a>
                         </div>
                         
-                        <!-- Кнопка маршрута -->
                         <div class="action-buttons" style="margin-top: 8px;">
                             <a href="https://2gis.kz/search/${encodedAddress}" target="_blank" class="btn-contact btn-map-route" style="width: 100%;">🗺️ Маршрут в 2ГИС</a>
                         </div>
@@ -675,7 +661,6 @@
         function acceptOrder(orderId) {
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
             
-            // Берем имя и телефон мастера из регистрации
             const masterName = document.getElementById('reg-master-name')?.value || "Мастер";
             const masterPhone = document.getElementById('reg-master-phone')?.value || "";
 
@@ -690,7 +675,7 @@
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
             savedOrders = savedOrders.filter(o => o.id !== orderId);
             localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders));
-            tg.showAlert("✅ Заказ завершен! Спасибо за работу.");
+            tg.showAlert("✅ Заказ завершен!");
             renderMasterOrders();
         }
 
