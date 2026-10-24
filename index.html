@@ -25,9 +25,7 @@
             margin: 0; padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-body); color: var(--text-main);
-            padding-bottom: 90px; -webkit-font-smoothing: antialiased;
-            /* Запрещаем горизонтальный скролл */
-            overflow-x: hidden; 
+            padding-bottom: 90px; -webkit-font-smoothing: antialiased; overflow-x: hidden; 
         }
 
         .container { padding: 20px; display: none; animation: fadeIn 0.3s ease; }
@@ -87,19 +85,15 @@
         .btn-upload {
             width: 100%; padding: 16px; border-radius: 14px;
             background-color: var(--bg-card); border: 1px dashed rgba(255,255,255,0.2);
-            color: white; font-size: 15px; font-weight: 600;
-            cursor: pointer; text-align: center; transition: background 0.2s;
+            color: white; font-size: 15px; font-weight: 600; cursor: pointer; text-align: center;
         }
-        .btn-upload:active { background-color: var(--bg-input); }
         #photo-preview { display: none; width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px; margin-top: 10px; }
 
         .btn-submit {
             width: 100%; padding: 18px; border-radius: 16px;
             background-color: var(--accent); color: #000;
-            font-weight: 700; font-size: 17px; border: none;
-            cursor: pointer; margin-top: 10px; transition: background 0.2s;
+            font-weight: 700; font-size: 17px; border: none; cursor: pointer; margin-top: 10px;
         }
-        .btn-submit:active { background-color: var(--accent-pressed); }
 
         /* Кабинет мастера */
         .toggle-btn {
@@ -121,19 +115,28 @@
         .order-price { font-size: 20px; font-weight: 800; color: var(--accent); margin: 10px 0 !important; }
         .order-photo { width: 100%; height: 160px; object-fit: cover; border-radius: 12px; margin: 10px 0; border: 1px solid rgba(255,255,255,0.1); }
         
-        .action-buttons { display: flex; gap: 10px; margin-top: 16px; }
-        .btn-accept { background-color: var(--accent); color: #000; border: none; padding: 14px; border-radius: 12px; flex: 1; font-weight: 700; font-size: 15px; cursor: pointer; }
-        .btn-whatsapp { background-color: #25D366; color: white; border: none; padding: 14px; border-radius: 12px; flex: 1; font-weight: 600; text-align: center; text-decoration: none; }
-        .btn-2gis { background-color: #1e88e5; color: white; border: none; padding: 14px; border-radius: 12px; flex: 1; font-weight: 600; text-align: center; text-decoration: none; }
+        .action-buttons { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+        .btn-accept { background-color: var(--accent); color: #000; border: none; padding: 14px; border-radius: 12px; flex: 1; font-weight: 700; font-size: 15px; cursor: pointer; width: 100%; }
+        
+        /* Кнопки связи для мастера */
+        .btn-contact { 
+            background-color: var(--bg-input); color: white; border: none; padding: 14px; 
+            border-radius: 12px; flex: 1; font-weight: 600; font-size: 14px; cursor: pointer; 
+            text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .btn-call { background-color: #1e88e5; }
+        .btn-whatsapp { background-color: #25D366; }
+        .btn-map-route { background-color: var(--accent); color: #000; }
+
         .btn-complete { background-color: rgba(255, 59, 48, 0.15); color: var(--danger); border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 600; cursor: pointer; margin-top: 10px; }
         
         .empty-state { text-align: center; color: var(--text-muted); margin-top: 30px; font-size: 15px; }
 
-        /* ЭКРАН РЕГИСТРАЦИИ */
-        #view-register { padding-top: 30px; } /* Убрали min-height и центрирование, чтобы не прыгало */
+        /* Экран регистрации */
+        #view-register { padding-top: 30px; }
         .role-btn {
             background-color: var(--bg-card); border: 2px solid transparent; border-radius: 18px;
-            padding: 24px; margin-bottom: 16px; text-align: center; cursor: pointer; transition: all 0.2s;
+            padding: 24px; margin-bottom: 16px; text-align: center; cursor: pointer;
         }
         .role-btn:active, .role-btn.selected { border-color: var(--accent); background-color: rgba(255, 204, 0, 0.05); }
         .role-icon { font-size: 48px; margin-bottom: 12px; }
@@ -145,8 +148,7 @@
             position: fixed; bottom: 0; left: 0; right: 0;
             background: rgba(15, 15, 17, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             border-top: 1px solid rgba(255,255,255,0.08);
-            display: flex; justify-content: space-around; padding: 12px 0 30px 0; z-index: 100;
-            display: none;
+            display: flex; justify-content: space-around; padding: 12px 0 30px 0; z-index: 100; display: none;
         }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 11px; font-weight: 500; cursor: pointer; flex: 1; }
         .nav-item.active { color: var(--accent); }
@@ -162,6 +164,11 @@
         .map-bottom-sheet { position: absolute; bottom: 0; left: 0; right: 0; z-index: 10; background-color: var(--bg-body); padding: 15px 20px 35px 20px; border-radius: 24px 24px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.6); border-top: 1px solid rgba(255,255,255,0.05); }
         .sheet-handle { width: 40px; height: 4px; background-color: #555; border-radius: 2px; margin: 0 auto 15px auto; }
         .map-address-text { font-size: 16px; margin-bottom: 20px; text-align: center; font-weight: 500; }
+
+        /* Статус клиента */
+        .status-box { background-color: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3); border-radius: 12px; padding: 16px; margin-top: 12px; }
+        .status-title { color: var(--success); font-size: 16px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+        .status-desc { color: var(--text-main); font-size: 14px; }
     </style>
 </head>
 <body>
@@ -171,14 +178,12 @@
         <h1>Добро пожаловать в Sheber</h1>
         <p class="subtitle">Выберите, как вы хотите использовать приложение</p>
         
-        <!-- Выбор роли -->
         <div id="role-selection">
             <div class="role-btn" onclick="selectRole('client')">
                 <div class="role-icon">🙋‍♂️</div>
                 <div class="role-title">Я Клиент</div>
                 <div class="role-desc">Хочу найти мастера для решения проблемы</div>
             </div>
-
             <div class="role-btn" onclick="selectRole('master')">
                 <div class="role-icon">🛠️</div>
                 <div class="role-title">Я Мастер</div>
@@ -186,7 +191,6 @@
             </div>
         </div>
 
-        <!-- Форма мастера -->
         <div id="master-reg-form" style="display: none;">
             <button class="back-btn" onclick="cancelMasterReg()">← Назад к выбору</button>
             <div class="form-group">
@@ -305,14 +309,21 @@
 
     <!-- НИЖНЕЕ МЕНЮ -->
     <div class="bottom-nav" id="main-nav">
-        <div id="nav-client" class="nav-item" onclick="switchTab('client-home')">
-            <div class="nav-icon">🔍</div><span>Главная</span>
+        <!-- Эти вкладки будут показываться ТОЛЬКО клиенту -->
+        <div id="nav-client-block" style="display: flex; width: 100%;">
+            <div id="nav-client" class="nav-item" onclick="switchTab('client-home')">
+                <div class="nav-icon">🔍</div><span>Главная</span>
+            </div>
+            <div id="nav-client-orders" class="nav-item" onclick="switchTab('client-orders')">
+                <div class="nav-icon">📋</div><span>Мои заказы</span>
+            </div>
         </div>
-        <div id="nav-client-orders" class="nav-item" onclick="switchTab('client-orders')">
-            <div class="nav-icon">📋</div><span>Мои заказы</span>
-        </div>
-        <div id="nav-master" class="nav-item" onclick="switchTab('master')">
-            <div class="nav-icon">🔧</div><span>Я Мастер</span>
+        
+        <!-- Эта вкладка будет показываться ТОЛЬКО мастеру -->
+        <div id="nav-master-block" style="display: none; width: 100%;">
+            <div id="nav-master" class="nav-item" onclick="switchTab('master')">
+                <div class="nav-icon">🔧</div><span>Панель мастера</span>
+            </div>
         </div>
     </div>
 
@@ -330,7 +341,7 @@
         
         const API_KEY_2GIS = "e15b258a-b886-448f-bae9-a067f639ec33";
 
-        // --- ФУНКЦИЯ МАСКИ ТЕЛЕФОНА (Универсальная) ---
+        // --- МАСКА ТЕЛЕФОНА ---
         function applyPhoneMask(inputElement) {
             inputElement.addEventListener('focus', () => { if (inputElement.value === '') inputElement.value = '+7 '; });
             inputElement.addEventListener('input', function (e) {
@@ -344,22 +355,30 @@
                 this.value = (input.length === 0) ? '+7 ' : formatted;
             });
         }
-        
-        // Применяем маску к обоим полям
         applyPhoneMask(document.getElementById('input-phone'));
         applyPhoneMask(document.getElementById('reg-master-phone'));
 
-        // --- РЕГИСТРАЦИЯ И СКРОЛЛ ---
+        // --- РЕГИСТРАЦИЯ И РОЛИ ---
         function initApp() {
             if (!currentUserRole) {
                 switchTab('register');
             } else {
                 document.getElementById('main-nav').style.display = 'flex';
-                if (currentUserRole === 'master') {
-                    switchTab('master');
-                } else {
-                    switchTab('client-home');
-                }
+                setupRoleUI(currentUserRole);
+            }
+        }
+
+        function setupRoleUI(role) {
+            // Скрываем все вкладки меню
+            document.getElementById('nav-client-block').style.display = 'none';
+            document.getElementById('nav-master-block').style.display = 'none';
+
+            if (role === 'master') {
+                document.getElementById('nav-master-block').style.display = 'flex';
+                switchTab('master');
+            } else {
+                document.getElementById('nav-client-block').style.display = 'flex';
+                switchTab('client-home');
             }
         }
 
@@ -370,7 +389,7 @@
             if (role === 'master') {
                 document.getElementById('role-selection').style.display = 'none';
                 document.getElementById('master-reg-form').style.display = 'block';
-                window.scrollTo(0, 0); // Скролл вверх при открытии формы
+                window.scrollTo(0, 0); 
             } else {
                 completeRegistration('client');
             }
@@ -387,19 +406,11 @@
             localStorage.setItem('sheber_role', role);
             tg.HapticFeedback.notificationOccurred('success');
             document.getElementById('main-nav').style.display = 'flex';
-            
-            if (role === 'master') {
-                switchTab('master');
-            } else {
-                switchTab('client-home');
-            }
+            setupRoleUI(role);
         }
 
-        // --- НАВИГАЦИЯ (С АВТО-СКРОЛЛОМ ВВЕРХ) ---
         function switchTab(tab) {
             tg.HapticFeedback.impactOccurred('light');
-            
-            // Принудительный скролл в самый верх при переключении
             window.scrollTo(0, 0); 
             
             document.querySelectorAll('.container').forEach(el => el.classList.remove('active'));
@@ -461,7 +472,7 @@
                         const preview = document.getElementById('photo-preview');
                         preview.src = uploadedPhotoBase64;
                         preview.style.display = 'block';
-                        document.querySelector('.btn-upload').innerText = "✅ Фото прикреплено (нажмите чтобы изменить)";
+                        document.querySelector('.btn-upload').innerText = "✅ Фото прикреплено";
                     };
                     img.src = e.target.result;
                 };
@@ -512,7 +523,7 @@
             closeMap();
         }
 
-        // --- ЗАКАЗЫ ---
+        // --- ЛОГИКА ЗАКАЗОВ ---
         function openOrderForm(category) {
             tg.HapticFeedback.impactOccurred('medium');
             currentCategory = category;
@@ -557,14 +568,14 @@
                 id: Date.now().toString(), clientId: MY_USER_ID, category: currentCategory,
                 phone: phone, address: fullAddress, desc: desc, price: price,
                 photo: uploadedPhotoBase64,
-                status: 'searching', masterId: null
+                status: 'searching', masterId: null, masterName: null, masterPhone: null
             };
 
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
             savedOrders.push(newOrder); 
             localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders)); 
 
-            tg.showAlert(`✅ Заказ опубликован!`);
+            tg.showAlert(`✅ Заказ опубликован! Ожидайте мастера.`);
             switchTab('client-orders');
         }
 
@@ -578,27 +589,44 @@
                 return;
             }
 
-            list.innerHTML = myOrders.map(order => `
+            list.innerHTML = myOrders.map(order => {
+                let statusHtml = '';
+                if (order.status === 'searching') {
+                    statusHtml = `<p style="color: var(--accent); font-weight: 600; margin-top: 12px;">⏳ Ищем мастера...</p>`;
+                } else if (order.status === 'accepted') {
+                    statusHtml = `
+                        <div class="status-box">
+                            <div class="status-title">✅ Мастер едет к вам!</div>
+                            <div class="status-desc">Мастер: ${order.masterName}</div>
+                            <button class="btn-submit" style="padding: 10px; font-size: 14px; margin-top: 10px;" onclick="showClientTrackingMap()">📍 Посмотреть на карте</button>
+                        </div>
+                    `;
+                }
+
+                return `
                 <div class="order-card ${order.status === 'accepted' ? 'in-progress' : ''}">
                     <h3>${order.category} <span style="float:right; color:var(--accent)">${order.price} ₸</span></h3>
                     ${order.photo ? `<img src="${order.photo}" class="order-photo">` : ''}
                     <p>📍 ${order.address}</p>
-                    <p style="color: ${order.status === 'searching' ? 'var(--accent)' : 'var(--success)'}; font-weight: 600; margin-top: 12px;">
-                        ${order.status === 'searching' ? '⏳ Ищем мастера...' : '✅ Мастер в пути'}
-                    </p>
+                    ${statusHtml}
                 </div>
-            `).join('');
+                `;
+            }).join('');
+        }
+
+        // Имитация карты для клиента
+        function showClientTrackingMap() {
+            tg.showAlert("📍 Открываем карту...\n\n(В реальном приложении здесь будет карта с движущимся мастером и временем прибытия, для этого нужен сервер)");
+            // Для красоты можно было бы открыть 2ГИС с маршрутом, но пока просто покажем уведомление
         }
 
         function renderMasterOrders() {
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
-            const availableForMe = savedOrders.filter(o => o.clientId !== MY_USER_ID);
-
             const newList = document.getElementById('new-orders-list');
             const activeList = document.getElementById('active-orders-list');
 
-            const newOrders = availableForMe.filter(o => o.status === 'searching');
-            const activeOrders = availableForMe.filter(o => o.status === 'accepted' && o.masterId === MY_USER_ID);
+            const newOrders = savedOrders.filter(o => o.status === 'searching');
+            const activeOrders = savedOrders.filter(o => o.status === 'accepted' && o.masterId === MY_USER_ID);
 
             if (newOrders.length === 0) {
                 newList.innerHTML = `<div class="empty-state">Нет новых заказов.<br><i>*Создайте заказ с другого аккаунта для теста.</i></div>`;
@@ -625,12 +653,18 @@
                         <h3>${order.category} <span style="float:right; color:var(--accent)">${order.price} ₸</span></h3>
                         ${order.photo ? `<img src="${order.photo}" class="order-photo">` : ''}
                         <p>📍 ${order.address}</p>
-                        <p>📞 ${order.phone}</p>
-                        <p>📝 ${order.desc || 'Без описания'}</p>
-                        <div class="action-buttons">
-                            <a href="https://wa.me/${cleanPhone}" target="_blank" class="btn-whatsapp">WhatsApp</a>
-                            <a href="https://2gis.kz/search/${encodedAddress}" target="_blank" class="btn-2gis">2ГИС</a>
+                        
+                        <!-- Блок связи с клиентом -->
+                        <div class="action-buttons" style="margin-top: 15px;">
+                            <a href="tel:+${cleanPhone}" class="btn-contact btn-call">📞 Позвонить</a>
+                            <a href="https://wa.me/${cleanPhone}" target="_blank" class="btn-contact btn-whatsapp">💬 WhatsApp</a>
                         </div>
+                        
+                        <!-- Кнопка маршрута -->
+                        <div class="action-buttons" style="margin-top: 8px;">
+                            <a href="https://2gis.kz/search/${encodedAddress}" target="_blank" class="btn-contact btn-map-route" style="width: 100%;">🗺️ Маршрут в 2ГИС</a>
+                        </div>
+
                         <button class="btn-complete" onclick="completeOrder('${order.id}')">Завершить заказ</button>
                     </div>
                     `;
@@ -640,8 +674,14 @@
 
         function acceptOrder(orderId) {
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
-            savedOrders = savedOrders.map(o => o.id === orderId ? {...o, status: 'accepted', masterId: MY_USER_ID} : o);
+            
+            // Берем имя и телефон мастера из регистрации
+            const masterName = document.getElementById('reg-master-name')?.value || "Мастер";
+            const masterPhone = document.getElementById('reg-master-phone')?.value || "";
+
+            savedOrders = savedOrders.map(o => o.id === orderId ? {...o, status: 'accepted', masterId: MY_USER_ID, masterName: masterName, masterPhone: masterPhone} : o);
             localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders));
+            
             tg.HapticFeedback.notificationOccurred('success');
             switchMasterTab('progress');
         }
@@ -650,7 +690,7 @@
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
             savedOrders = savedOrders.filter(o => o.id !== orderId);
             localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders));
-            tg.showAlert("✅ Заказ завершен!");
+            tg.showAlert("✅ Заказ завершен! Спасибо за работу.");
             renderMasterOrders();
         }
 
@@ -667,7 +707,6 @@
             }
         }
 
-        // Инициализация
         initApp();
     </script>
 </body>
