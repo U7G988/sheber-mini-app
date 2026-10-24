@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sheber Mini App</title>
-    <!-- Подключаем SDK Telegram -->
+    <!-- SDK Telegram -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Подключаем 2ГИС MapGL API -->
+    <!-- 2GIS MapGL -->
     <script src="https://mapgl.2gis.com/api/js/v1"></script>
     <style>
         :root {
@@ -27,7 +27,9 @@
             padding-bottom: 80px;
         }
 
-        .container { padding: 20px; }
+        .container { padding: 20px; display: none; }
+        .container.active { display: block; }
+        
         h1 { font-size: 24px; margin: 0 0 5px 0; font-weight: 700; }
         .subtitle { color: var(--text-muted); font-size: 14px; margin: 0 0 20px 0; }
 
@@ -35,11 +37,9 @@
             background-color: var(--card-bg); border-radius: 12px;
             padding: 12px 16px; display: flex; align-items: center; margin-bottom: 24px;
         }
-        .search-bar input {
-            background: transparent; border: none; color: white;
-            font-size: 15px; width: 100%; outline: none;
-        }
+        .search-bar input { background: transparent; border: none; color: white; font-size: 15px; width: 100%; outline: none; }
 
+        /* Сетка категорий */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .card {
             background-color: var(--card-bg); border-radius: 16px; padding: 16px;
@@ -54,30 +54,13 @@
         .card h3 { margin: 0 0 4px 0; font-size: 15px; font-weight: 600; }
         .card p { margin: 0; font-size: 12px; color: var(--text-muted); }
 
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background-color: #1a1a1a; border-top: 1px solid #333;
-            display: flex; justify-content: space-around; padding: 10px 0 20px 0;
-            z-index: 100;
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            color: var(--text-muted); font-size: 11px; cursor: pointer;
-        }
-        .nav-item.active { color: var(--accent); }
-        .nav-icon {
-            width: 40px; height: 40px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px; margin-bottom: 4px;
-        }
-        .nav-item.active .nav-icon { background-color: var(--accent); color: #000; }
-
+        /* Формы */
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
         .form-input {
             width: 100%; padding: 14px; border-radius: 12px;
             background-color: var(--card-bg); border: 1px solid #444;
-            color: white; font-size: 15px; outline: none;
+            color: white; font-size: 15px; outline: none; transition: border 0.3s;
         }
         .form-input:focus { border-color: var(--accent); }
         textarea.form-input { resize: none; height: 80px; }
@@ -85,9 +68,7 @@
         select.form-input {
             appearance: none;
             background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat;
-            background-position: right 15px top 50%;
-            background-size: 12px auto;
+            background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 12px auto;
         }
 
         .address-row { display: flex; gap: 10px; }
@@ -102,24 +83,24 @@
             width: 100%; padding: 16px; border-radius: 12px;
             background-color: var(--accent); color: #000;
             font-weight: bold; font-size: 16px; border: none;
-            cursor: pointer; margin-top: 10px;
+            cursor: pointer; margin-top: 10px; transition: background 0.2s;
         }
+        .btn-submit:active { background-color: var(--accent-dark); }
 
+        /* Кабинет мастера */
         .toggle-btn {
             width: 100%; padding: 16px; border-radius: 12px;
             background-color: var(--card-bg); color: white;
             font-size: 16px; border: 1px solid #444; margin-bottom: 20px;
-            cursor: pointer; font-weight: bold;
+            cursor: pointer; font-weight: bold; transition: all 0.3s;
         }
         .toggle-btn.online { background-color: #22c55e; border-color: #22c55e; color: white; }
-
-        .back-btn { background: none; border: none; color: var(--accent); font-size: 16px; cursor: pointer; padding: 0; margin-bottom: 15px; }
 
         .master-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
         .master-tab {
             flex: 1; text-align: center; padding: 10px;
             background-color: var(--card-bg); border-radius: 8px;
-            font-size: 14px; cursor: pointer; color: var(--text-muted);
+            font-size: 14px; cursor: pointer; color: var(--text-muted); transition: all 0.2s;
         }
         .master-tab.active { background-color: var(--accent); color: #000; font-weight: bold; }
 
@@ -135,63 +116,96 @@
         
         .action-buttons { display: flex; gap: 8px; margin-top: 12px; }
         .btn-accept { background-color: #22c55e; color: white; border: none; padding: 12px; border-radius: 8px; flex: 1; font-weight: bold; cursor: pointer; }
-        .btn-whatsapp { background-color: #25D366; color: white; border: none; padding: 12px; border-radius: 8px; flex: 1; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none;}
-        .btn-2gis { background-color: #1e88e5; color: white; border: none; padding: 12px; border-radius: 8px; flex: 1; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none;}
+        .btn-whatsapp { background-color: #25D366; color: white; border: none; padding: 12px; border-radius: 8px; flex: 1; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; }
+        .btn-2gis { background-color: #1e88e5; color: white; border: none; padding: 12px; border-radius: 8px; flex: 1; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; }
         .btn-complete { background-color: #ef4444; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 8px; }
-        .empty-state { text-align: center; color: var(--text-muted); margin-top: 20px; }
+        
+        .empty-state { text-align: center; color: var(--text-muted); margin-top: 20px; padding: 20px; }
 
-        /* --- СТИЛИ ДЛЯ КАРТЫ 2ГИС --- */
+        /* Нижняя навигация */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background-color: #1a1a1a; border-top: 1px solid #333;
+            display: flex; justify-content: space-around; padding: 10px 0 25px 0;
+            z-index: 100;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center;
+            color: var(--text-muted); font-size: 11px; cursor: pointer; flex: 1;
+        }
+        .nav-item.active { color: var(--accent); }
+        .nav-icon {
+            width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; margin-bottom: 4px; transition: background 0.2s;
+        }
+        .nav-item.active .nav-icon { background-color: var(--accent); color: #000; }
+
+        /* Карта 2ГИС */
         #map-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--bg-color); z-index: 9999; flex-direction: column;
         }
-        #map-container {
-            width: 100%; height: 100%; position: absolute; top: 0; left: 0;
-        }
-        .map-overlay-top {
+        #map-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+        
+        .map-top-controls {
             position: absolute; top: 20px; left: 20px; right: 20px; z-index: 10;
+            display: flex; justify-content: space-between;
         }
-        .map-close-btn {
+        .map-icon-btn {
             background: white; border: none; border-radius: 50%;
-            width: 40px; height: 40px; font-size: 20px;
+            width: 44px; height: 44px; font-size: 20px;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.2); color: black;
         }
+        .map-icon-btn.locate { color: #1e88e5; }
+
         .map-center-pin {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -100%); z-index: 10;
-            font-size: 40px; pointer-events: none;
+            font-size: 40px; pointer-events: none; margin-top: -20px; /* Чтобы пин смотрел точно в центр */
         }
-        .map-overlay-bottom {
+        
+        /* Шторка как в Яндекс.Такси */
+        .map-bottom-sheet {
             position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;
-            background-color: var(--bg-color); padding: 20px;
-            border-radius: 20px 20px 0 0; box-shadow: 0 -4px 10px rgba(0,0,0,0.5);
+            background-color: var(--bg-color); padding: 15px 20px 30px 20px;
+            border-radius: 24px 24px 0 0; box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
+        }
+        .sheet-handle {
+            width: 40px; height: 4px; background-color: #555;
+            border-radius: 2px; margin: 0 auto 15px auto;
         }
         .map-address-text {
-            font-size: 16px; margin-bottom: 15px; text-align: center; font-weight: bold;
+            font-size: 16px; margin-bottom: 15px; text-align: center; font-weight: 500;
+            line-height: 1.4;
         }
     </style>
 </head>
 <body>
 
-    <div id="view-client" class="container">
+    <!-- ГЛАВНЫЙ ЭКРАН КЛИЕНТА -->
+    <div id="view-client" class="container active">
         <h1>Что починить?</h1>
         <p class="subtitle">Выберите категорию — мастера увидят ваш заказ</p>
-        <div class="search-bar">
-            <span style="margin-right: 10px; color: var(--text-muted);">🔍</span>
-            <input type="text" placeholder="Поиск... сантехник, электрик">
-        </div>
         <div class="grid">
             <div class="card" onclick="openOrderForm('Сантехник')"><div class="icon-circle">🔧</div><h3>Сантехник</h3><p>Краны, трубы, засоры</p></div>
             <div class="card" onclick="openOrderForm('Электрик')"><div class="icon-circle">💡</div><h3>Электрик</h3><p>Проводка, свет, розетки</p></div>
-            <div class="card" onclick="openOrderForm('Мастер на час')"><div class="icon-circle">🛠️</div><h3>Мастер на час</h3><p>Мелкий ремонт</p></div>
-            <div class="card" onclick="openOrderForm('Авто')"><div class="icon-circle">🚗</div><h3>Авто</h3><p>Автоэлектрик, помощь</p></div>
+            <div class="card" onclick="openOrderForm('Клинер')"><div class="icon-circle">🧹</div><h3>Клинер</h3><p>Уборка квартир</p></div>
+            <div class="card" onclick="openOrderForm('Ремонт техники')"><div class="icon-circle">🔌</div><h3>Ремонт техники</h3><p>Стиралки, холодильники</p></div>
         </div>
     </div>
 
+    <!-- МОИ ЗАКАЗЫ КЛИЕНТА -->
+    <div id="view-client-orders" class="container">
+        <h1>Мои заказы</h1>
+        <p class="subtitle">Здесь отображаются ваши активные заказы</p>
+        <div id="client-orders-list"></div>
+    </div>
+
     <!-- ФОРМА ЗАКАЗА -->
-    <div id="view-order-form" class="container" style="display: none;">
-        <button class="back-btn" onclick="switchTab('client')">← Назад</button>
+    <div id="view-order-form" class="container">
+        <button class="back-btn" onclick="switchTab('client-home')" style="background:none; border:none; color:var(--accent); font-size:16px; margin-bottom:15px; cursor:pointer;">← Назад</button>
         <h1 id="form-title">Заказ: Сантехник</h1>
         
         <div class="form-group">
@@ -230,29 +244,31 @@
     </div>
 
     <!-- КАБИНЕТ МАСТЕРА -->
-    <div id="view-master" class="container" style="display: none;">
+    <div id="view-master" class="container">
         <h1>Кабинет мастера</h1>
         <button id="status-btn" class="toggle-btn" onclick="toggleOnlineStatus()">🔴 Я офлайн (Нажмите, чтобы выйти на смену)</button>
+        
         <div class="master-tabs">
-            <div class="master-tab active" id="tab-new" onclick="switchMasterTab('new')">Новые заказы</div>
+            <div class="master-tab active" id="tab-new" onclick="switchMasterTab('new')">Новые</div>
             <div class="master-tab" id="tab-progress" onclick="switchMasterTab('progress')">В работе</div>
         </div>
         <div id="new-orders-list"></div>
         <div id="active-orders-list" style="display: none;"></div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО С КАРТОЙ 2ГИС -->
+    <!-- МОДАЛЬНОЕ ОКНО КАРТЫ 2ГИС -->
     <div id="map-modal">
         <div id="map-container"></div>
         
-        <div class="map-overlay-top">
-            <button class="map-close-btn" onclick="closeMap()">✕</button>
+        <div class="map-top-controls">
+            <button class="map-icon-btn" onclick="closeMap()">✕</button>
+            <button class="map-icon-btn locate" onclick="locateMe()">📍</button>
         </div>
 
-        <!-- Пин по центру экрана -->
         <div class="map-center-pin">📍</div>
 
-        <div class="map-overlay-bottom">
+        <div class="map-bottom-sheet">
+            <div class="sheet-handle"></div>
             <div class="map-address-text" id="map-selected-address">Двигайте карту, чтобы выбрать дом</div>
             <button class="btn-submit" onclick="confirmMapAddress()">Подтвердить адрес</button>
         </div>
@@ -260,114 +276,72 @@
 
     <!-- Нижнее меню -->
     <div class="bottom-nav">
-        <div id="nav-client" class="nav-item active" onclick="switchTab('client')"><div class="nav-icon">🔍</div><span>Ищу</span></div>
-        <div id="nav-master" class="nav-item" onclick="switchTab('master')"><div class="nav-icon">🔧</div><span>Мастер</span></div>
+        <div id="nav-client" class="nav-item active" onclick="switchTab('client-home')">
+            <div class="nav-icon">🔍</div><span>Я Клиент</span>
+        </div>
+        <div id="nav-client-orders" class="nav-item" onclick="switchTab('client-orders')">
+            <div class="nav-icon">📋</div><span>Мои заказы</span>
+        </div>
+        <div id="nav-master" class="nav-item" onclick="switchTab('master')">
+            <div class="nav-icon">🔧</div><span>Я Мастер</span>
+        </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        
+        // Уникальный ID пользователя для разделения ролей (в Telegram берем реальный ID)
+        const MY_USER_ID = tg.initDataUnsafe?.user?.id || 'test_user_' + Math.floor(Math.random() * 1000);
+        
         let currentCategory = "";
         let isMasterOnline = false;
         let currentMasterTab = 'new';
         let map = null;
-        let mapMarkers = [];
         
         // ВАШ КЛЮЧ 2ГИС
         const API_KEY_2GIS = "e15b258a-b886-448f-bae9-a067f639ec33";
 
-        // Маска телефона
-        document.getElementById('input-phone').addEventListener('input', function (e) {
-            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
-            e.target.value = !x[2] ? '+7 ' : '+7 (' + x[2] + ') ' + x[3] + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
+        // --- ИСПРАВЛЕННАЯ МАСКА ТЕЛЕФОНА ---
+        const phoneInput = document.getElementById('input-phone');
+        phoneInput.addEventListener('focus', () => {
+            if (phoneInput.value === '') phoneInput.value = '+7 ';
+        });
+        phoneInput.addEventListener('input', function (e) {
+            let input = this.value.replace(/\D/g, '');
+            if (input.startsWith('7')) input = input.substring(1);
+            
+            let formatted = '+7 ';
+            if (input.length > 0) formatted += '(' + input.substring(0, 3);
+            if (input.length >= 4) formatted += ') ' + input.substring(3, 6);
+            if (input.length >= 7) formatted += '-' + input.substring(6, 8);
+            if (input.length >= 9) formatted += '-' + input.substring(8, 10);
+            
+            // Если пользователь всё стер, оставляем просто +7
+            this.value = (input.length === 0) ? '+7 ' : formatted;
         });
 
-        // --- ЛОГИКА КАРТЫ 2ГИС ---
-        function openMap() {
-            tg.HapticFeedback.impactOccurred('light');
-            document.getElementById('map-modal').style.display = 'flex';
-
-            // Если карта еще не создана, создаем ее
-            if (!map) {
-                map = new mapgl.Map('map-container', {
-                    key: API_KEY_2GIS,
-                    center: [71.4304, 51.1282], // Координаты Астаны (Долгота, Широта)
-                    zoom: 14,
-                    zoomControl: false,
-                    copyright: false
-                });
-
-                // При движении карты обновляем текст снизу
-                map.on('moveend', updateMapAddress);
-            }
-        }
-
-        function closeMap() {
-            document.getElementById('map-modal').style.display = 'none';
-            tg.HapticFeedback.impactOccurred('light');
-        }
-
-        // Функция получения адреса по координатам (обратное геокодирование)
-        async function updateMapAddress() {
-            const center = map.getCenter();
-            // Временно показываем координаты, пока грузится текст
-            document.getElementById('map-selected-address').innerText = "Определяем адрес...";
-
-            try {
-                // Запрос к Geocoder API 2ГИС
-                const response = await fetch(`https://catalog.api.2gis.com/3.0/items/geocode?q=${center[1]},${center[0]}&key=${API_KEY_2GIS}&fields=items.point,items.address`);
-                const data = await response.json();
-                
-                if (data.result && data.result.items && data.result.items.length > 0) {
-                    const address = data.result.items[0].full_name;
-                    document.getElementById('map-selected-address').innerText = address;
-                    // Сохраняем координаты в скрытые атрибуты
-                    document.getElementById('map-selected-address').dataset.lat = center[1];
-                    document.getElementById('map-selected-address').dataset.lon = center[0];
-                    document.getElementById('map-selected-address').dataset.fullAddress = address;
-                } else {
-                    throw new Error("Адрес не найден");
-                }
-            } catch (error) {
-                // Если ключ не поддерживает Геокодер, просто берем координаты
-                console.log("Geocoder error:", error);
-                const coordText = `Координаты: ${center[1].toFixed(5)}, ${center[0].toFixed(5)}`;
-                document.getElementById('map-selected-address').innerText = coordText;
-                document.getElementById('map-selected-address').dataset.lat = center[1];
-                document.getElementById('map-selected-address').dataset.lon = center[0];
-                document.getElementById('map-selected-address').dataset.fullAddress = coordText;
-            }
-        }
-
-        function confirmMapAddress() {
-            const addressEl = document.getElementById('map-selected-address');
-            const fullAddress = addressEl.dataset.fullAddress || addressEl.innerText;
-            const city = document.getElementById('input-city').value;
-            
-            // Записываем адрес в поле ввода
-            document.getElementById('input-address').value = fullAddress;
-            
-            closeMap();
-        }
-
-
-        // --- ОСТАЛЬНАЯ ЛОГИКА ПРИЛОЖЕНИЯ ---
-
+        // --- НАВИГАЦИЯ И РОЛИ ---
         function switchTab(tab) {
             tg.HapticFeedback.impactOccurred('light');
-            document.getElementById('view-client').style.display = 'none';
-            document.getElementById('view-order-form').style.display = 'none';
-            document.getElementById('view-master').style.display = 'none';
-            document.getElementById('nav-client').classList.remove('active');
-            document.getElementById('nav-master').classList.remove('active');
+            
+            // Скрываем все экраны
+            document.querySelectorAll('.container').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
-            if (tab === 'client') {
-                document.getElementById('view-client').style.display = 'block';
+            if (tab === 'client-home') {
+                document.getElementById('view-client').classList.add('active');
                 document.getElementById('nav-client').classList.add('active');
+            } else if (tab === 'client-orders') {
+                document.getElementById('view-client-orders').classList.add('active');
+                document.getElementById('nav-client-orders').classList.add('active');
+                renderClientOrders();
             } else if (tab === 'master') {
-                document.getElementById('view-master').style.display = 'block';
+                document.getElementById('view-master').classList.add('active');
                 document.getElementById('nav-master').classList.add('active');
                 renderMasterOrders();
+            } else if (tab === 'order-form') {
+                document.getElementById('view-order-form').classList.add('active');
             }
         }
 
@@ -387,12 +361,83 @@
             renderMasterOrders();
         }
 
+        // --- КАРТА 2ГИС ---
+        function openMap() {
+            tg.HapticFeedback.impactOccurred('light');
+            document.getElementById('map-modal').style.display = 'flex';
+
+            if (!map) {
+                map = new mapgl.Map('map-container', {
+                    key: API_KEY_2GIS,
+                    center: [71.4304, 51.1282], // Астана
+                    zoom: 15,
+                    zoomControl: false,
+                    copyright: false
+                });
+
+                map.on('moveend', updateMapAddress);
+            }
+        }
+
+        function closeMap() {
+            document.getElementById('map-modal').style.display = 'none';
+        }
+
+        // Кнопка "Найти меня"
+        function locateMe() {
+            if (navigator.geolocation) {
+                tg.showAlert("Определяем местоположение...");
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+                        map.setCenter([longitude, latitude]);
+                        map.setZoom(16);
+                    }, 
+                    (error) => {
+                        tg.showAlert("Не удалось определить геопозицию. Разрешите доступ в настройках Telegram.");
+                    },
+                    { enableHighAccuracy: true }
+                );
+            } else {
+                tg.showAlert("Ваше устройство не поддерживает геолокацию.");
+            }
+        }
+
+        async function updateMapAddress() {
+            const center = map.getCenter();
+            const addressEl = document.getElementById('map-selected-address');
+            addressEl.innerText = "Определяем адрес...";
+
+            try {
+                const response = await fetch(`https://catalog.api.2gis.com/3.0/items/geocode?q=${center[1]},${center[0]}&key=${API_KEY_2GIS}&fields=items.point,items.address`);
+                const data = await response.json();
+                
+                if (data.result && data.result.items && data.result.items.length > 0) {
+                    const address = data.result.items[0].full_name;
+                    addressEl.innerText = address;
+                    addressEl.dataset.fullAddress = address;
+                } else {
+                    throw new Error("Не найдено");
+                }
+            } catch (error) {
+                const coordText = `Координаты: ${center[1].toFixed(5)}, ${center[0].toFixed(5)}`;
+                addressEl.innerText = coordText;
+                addressEl.dataset.fullAddress = coordText;
+            }
+        }
+
+        function confirmMapAddress() {
+            const addressEl = document.getElementById('map-selected-address');
+            const fullAddress = addressEl.dataset.fullAddress || addressEl.innerText;
+            document.getElementById('input-address').value = fullAddress;
+            closeMap();
+        }
+
+        // --- ЛОГИКА ЗАКАЗОВ ---
         function openOrderForm(category) {
             tg.HapticFeedback.impactOccurred('medium');
             currentCategory = category;
-            document.getElementById('view-client').style.display = 'none';
-            document.getElementById('view-master').style.display = 'none';
-            document.getElementById('view-order-form').style.display = 'block';
+            switchTab('order-form');
             document.getElementById('form-title').innerText = "Заказ: " + category;
             
             document.getElementById('input-phone').value = '+7 ';
@@ -408,41 +453,68 @@
             const desc = document.getElementById('input-desc').value;
             const price = document.getElementById('input-price').value;
 
-            if (!phone || phone.length < 5 || !address || !price) {
+            if (phone.length < 5 || !address || !price) {
                 tg.showAlert("Пожалуйста, заполните телефон, адрес и цену!");
                 return;
             }
 
-            const fullAddress = `${city}, ${address}`;
-
             const newOrder = {
                 id: Date.now().toString(),
+                clientId: MY_USER_ID, // Запоминаем, кто создал
                 category: currentCategory,
                 phone: phone,
-                address: fullAddress,
+                address: `${city}, ${address}`,
                 desc: desc,
                 price: price,
-                status: 'searching'
+                status: 'searching',
+                masterId: null // ID мастера, который взял
             };
 
-            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders')) || [];
+            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
             savedOrders.push(newOrder); 
-            localStorage.setItem('sheber_orders', JSON.stringify(savedOrders)); 
+            localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders)); 
 
-            tg.showAlert(`✅ Заказ на "${currentCategory}" опубликован!`);
-            switchTab('client');
+            tg.showAlert(`✅ Заказ на "${currentCategory}" опубликован! Ожидайте отклика мастера.`);
+            switchTab('client-orders');
         }
 
+        // --- ОТОБРАЖЕНИЕ У КЛИЕНТА ---
+        function renderClientOrders() {
+            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
+            const myOrders = savedOrders.filter(o => o.clientId === MY_USER_ID);
+            const list = document.getElementById('client-orders-list');
+
+            if (myOrders.length === 0) {
+                list.innerHTML = `<div class="empty-state">У вас пока нет активных заказов.</div>`;
+                return;
+            }
+
+            list.innerHTML = myOrders.map(order => `
+                <div class="order-card ${order.status === 'accepted' ? 'in-progress' : ''}">
+                    <h3>${order.category} - ${order.price} ₸</h3>
+                    <p>📍 ${order.address}</p>
+                    <p style="color: ${order.status === 'searching' ? '#facc15' : '#22c55e'}; font-weight: bold; margin-top: 8px;">
+                        ${order.status === 'searching' ? '⏳ Ищем мастера...' : '✅ Мастер в пути (В работе)'}
+                    </p>
+                </div>
+            `).join('');
+        }
+
+        // --- ОТОБРАЖЕНИЕ У МАСТЕРА (С ФИЛЬТРОМ СВОИХ ЗАКАЗОВ) ---
         function renderMasterOrders() {
-            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders')) || [];
+            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
+            
+            // МАГИЯ: Мастер видит ТОЛЬКО те заказы, которые создали ДРУГИЕ люди
+            const availableForMe = savedOrders.filter(o => o.clientId !== MY_USER_ID);
+
             const newList = document.getElementById('new-orders-list');
             const activeList = document.getElementById('active-orders-list');
 
-            const newOrders = savedOrders.filter(o => o.status === 'searching');
-            const activeOrders = savedOrders.filter(o => o.status === 'accepted');
+            const newOrders = availableForMe.filter(o => o.status === 'searching');
+            const activeOrders = availableForMe.filter(o => o.status === 'accepted' && o.masterId === MY_USER_ID);
 
             if (newOrders.length === 0) {
-                newList.innerHTML = `<div class="empty-state">Нет новых заказов</div>`;
+                newList.innerHTML = `<div class="empty-state">Нет новых заказов (или вы видите только свои).<br><br><i>*Чтобы протестировать, откройте бота с другого аккаунта и создайте заказ.</i></div>`;
             } else {
                 newList.innerHTML = newOrders.map(order => `
                     <div class="order-card">
@@ -455,7 +527,7 @@
             }
 
             if (activeOrders.length === 0) {
-                activeList.innerHTML = `<div class="empty-state">У вас нет активных заказов</div>`;
+                activeList.innerHTML = `<div class="empty-state">У вас нет заказов в работе</div>`;
             } else {
                 activeList.innerHTML = activeOrders.map(order => {
                     let cleanPhone = order.phone.replace(/\D/g,''); 
@@ -466,7 +538,6 @@
                         <p class="order-price">💰 ${order.price} ₸</p>
                         <p>📍 ${order.address}</p>
                         <p>📞 ${order.phone}</p>
-                        <p>📝 ${order.desc || 'Без описания'}</p>
                         <div class="action-buttons">
                             <a href="https://wa.me/${cleanPhone}" target="_blank" class="btn-whatsapp">WhatsApp</a>
                             <a href="https://2gis.kz/search/${encodedAddress}" target="_blank" class="btn-2gis">2ГИС</a>
@@ -479,18 +550,19 @@
         }
 
         function acceptOrder(orderId) {
-            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders')) || [];
-            savedOrders = savedOrders.map(o => o.id === orderId ? {...o, status: 'accepted'} : o);
-            localStorage.setItem('sheber_orders', JSON.stringify(savedOrders));
+            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
+            savedOrders = savedOrders.map(o => o.id === orderId ? {...o, status: 'accepted', masterId: MY_USER_ID} : o);
+            localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders));
+            
             tg.HapticFeedback.notificationOccurred('success');
             switchMasterTab('progress');
         }
 
         function completeOrder(orderId) {
-            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders')) || [];
+            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
             savedOrders = savedOrders.filter(o => o.id !== orderId);
-            localStorage.setItem('sheber_orders', JSON.stringify(savedOrders));
-            tg.showAlert("✅ Заказ завершен!");
+            localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders));
+            tg.showAlert("✅ Заказ завершен! Спасибо за работу.");
             renderMasterOrders();
         }
 
