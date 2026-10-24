@@ -26,6 +26,8 @@
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-body); color: var(--text-main);
             padding-bottom: 90px; -webkit-font-smoothing: antialiased;
+            /* Запрещаем горизонтальный скролл */
+            overflow-x: hidden; 
         }
 
         .container { padding: 20px; display: none; animation: fadeIn 0.3s ease; }
@@ -52,7 +54,9 @@
         .card p { margin: 0; font-size: 13px; color: var(--text-muted); line-height: 1.3; }
 
         /* Формы */
-        .back-btn { background: none; border: none; color: var(--accent); font-size: 16px; font-weight: 600; cursor: pointer; padding: 0 0 15px 0; }
+        .back-btn { background: none; border: none; color: var(--text-muted); font-size: 16px; font-weight: 600; cursor: pointer; padding: 0 0 15px 0; display: flex; align-items: center; gap: 5px; }
+        .back-btn:hover { color: var(--accent); }
+        
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
         .form-input {
@@ -126,7 +130,7 @@
         .empty-state { text-align: center; color: var(--text-muted); margin-top: 30px; font-size: 15px; }
 
         /* ЭКРАН РЕГИСТРАЦИИ */
-        #view-register { display: flex; flex-direction: column; justify-content: center; min-height: 80vh; }
+        #view-register { padding-top: 30px; } /* Убрали min-height и центрирование, чтобы не прыгало */
         .role-btn {
             background-color: var(--bg-card); border: 2px solid transparent; border-radius: 18px;
             padding: 24px; margin-bottom: 16px; text-align: center; cursor: pointer; transition: all 0.2s;
@@ -142,7 +146,7 @@
             background: rgba(15, 15, 17, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             border-top: 1px solid rgba(255,255,255,0.08);
             display: flex; justify-content: space-around; padding: 12px 0 30px 0; z-index: 100;
-            display: none; /* Скрыто до регистрации */
+            display: none;
         }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 11px; font-weight: 500; cursor: pointer; flex: 1; }
         .nav-item.active { color: var(--accent); }
@@ -162,25 +166,29 @@
 </head>
 <body>
 
-    <!-- ЭКРАН РЕГИСТРАЦИИ (Появляется при первом входе) -->
+    <!-- ЭКРАН РЕГИСТРАЦИИ -->
     <div id="view-register" class="container">
         <h1>Добро пожаловать в Sheber</h1>
         <p class="subtitle">Выберите, как вы хотите использовать приложение</p>
         
-        <div class="role-btn" onclick="selectRole('client')">
-            <div class="role-icon">🙋‍♂️</div>
-            <div class="role-title">Я Клиент</div>
-            <div class="role-desc">Хочу найти мастера для решения проблемы</div>
-        </div>
+        <!-- Выбор роли -->
+        <div id="role-selection">
+            <div class="role-btn" onclick="selectRole('client')">
+                <div class="role-icon">🙋‍♂️</div>
+                <div class="role-title">Я Клиент</div>
+                <div class="role-desc">Хочу найти мастера для решения проблемы</div>
+            </div>
 
-        <div class="role-btn" onclick="selectRole('master')">
-            <div class="role-icon">🛠️</div>
-            <div class="role-title">Я Мастер</div>
-            <div class="role-desc">Хочу выполнять заказы и зарабатывать</div>
+            <div class="role-btn" onclick="selectRole('master')">
+                <div class="role-icon">🛠️</div>
+                <div class="role-title">Я Мастер</div>
+                <div class="role-desc">Хочу выполнять заказы и зарабатывать</div>
+            </div>
         </div>
 
         <!-- Форма мастера -->
-        <div id="master-reg-form" style="display: none; margin-top: 20px;">
+        <div id="master-reg-form" style="display: none;">
+            <button class="back-btn" onclick="cancelMasterReg()">← Назад к выбору</button>
             <div class="form-group">
                 <label>Ваше имя</label>
                 <input type="text" id="reg-master-name" class="form-input" placeholder="Например: Алексей">
@@ -313,7 +321,7 @@
         tg.expand();
         
         const MY_USER_ID = tg.initDataUnsafe?.user?.id || 'test_' + Math.floor(Math.random() * 1000);
-        let currentUserRole = localStorage.getItem('sheber_role') || null; // 'client' или 'master'
+        let currentUserRole = localStorage.getItem('sheber_role') || null; 
         let currentCategory = "";
         let isMasterOnline = false;
         let currentMasterTab = 'new';
@@ -322,21 +330,26 @@
         
         const API_KEY_2GIS = "e15b258a-b886-448f-bae9-a067f639ec33";
 
-        // Маска телефона
-        const phoneInput = document.getElementById('input-phone');
-        phoneInput.addEventListener('focus', () => { if (phoneInput.value === '') phoneInput.value = '+7 '; });
-        phoneInput.addEventListener('input', function (e) {
-            let input = this.value.replace(/\D/g, '');
-            if (input.startsWith('7')) input = input.substring(1);
-            let formatted = '+7 ';
-            if (input.length > 0) formatted += '(' + input.substring(0, 3);
-            if (input.length >= 4) formatted += ') ' + input.substring(3, 6);
-            if (input.length >= 7) formatted += '-' + input.substring(6, 8);
-            if (input.length >= 9) formatted += '-' + input.substring(8, 10);
-            this.value = (input.length === 0) ? '+7 ' : formatted;
-        });
+        // --- ФУНКЦИЯ МАСКИ ТЕЛЕФОНА (Универсальная) ---
+        function applyPhoneMask(inputElement) {
+            inputElement.addEventListener('focus', () => { if (inputElement.value === '') inputElement.value = '+7 '; });
+            inputElement.addEventListener('input', function (e) {
+                let input = this.value.replace(/\D/g, '');
+                if (input.startsWith('7')) input = input.substring(1);
+                let formatted = '+7 ';
+                if (input.length > 0) formatted += '(' + input.substring(0, 3);
+                if (input.length >= 4) formatted += ') ' + input.substring(3, 6);
+                if (input.length >= 7) formatted += '-' + input.substring(6, 8);
+                if (input.length >= 9) formatted += '-' + input.substring(8, 10);
+                this.value = (input.length === 0) ? '+7 ' : formatted;
+            });
+        }
+        
+        // Применяем маску к обоим полям
+        applyPhoneMask(document.getElementById('input-phone'));
+        applyPhoneMask(document.getElementById('reg-master-phone'));
 
-        // --- РЕГИСТРАЦИЯ ---
+        // --- РЕГИСТРАЦИЯ И СКРОЛЛ ---
         function initApp() {
             if (!currentUserRole) {
                 switchTab('register');
@@ -355,11 +368,18 @@
             event.currentTarget.classList.add('selected');
             
             if (role === 'master') {
+                document.getElementById('role-selection').style.display = 'none';
                 document.getElementById('master-reg-form').style.display = 'block';
+                window.scrollTo(0, 0); // Скролл вверх при открытии формы
             } else {
-                document.getElementById('master-reg-form').style.display = 'none';
                 completeRegistration('client');
             }
+        }
+
+        function cancelMasterReg() {
+            document.getElementById('role-selection').style.display = 'block';
+            document.getElementById('master-reg-form').style.display = 'none';
+            document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('selected'));
         }
 
         function completeRegistration(role) {
@@ -375,9 +395,13 @@
             }
         }
 
-        // --- НАВИГАЦИЯ ---
+        // --- НАВИГАЦИЯ (С АВТО-СКРОЛЛОМ ВВЕРХ) ---
         function switchTab(tab) {
             tg.HapticFeedback.impactOccurred('light');
+            
+            // Принудительный скролл в самый верх при переключении
+            window.scrollTo(0, 0); 
+            
             document.querySelectorAll('.container').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
@@ -420,7 +444,6 @@
         function handlePhotoUpload(event) {
             const file = event.target.files[0];
             if (file) {
-                // Сжимаем фото перед сохранением, чтобы не переполнить память
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const img = new Image();
@@ -433,7 +456,6 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                         
-                        // Сохраняем как JPEG с качеством 70%
                         uploadedPhotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
                         
                         const preview = document.getElementById('photo-preview');
@@ -524,7 +546,6 @@
                 return;
             }
 
-            // Собираем полный адрес для мастера
             let fullAddress = `${city}, ${address}`;
             let details = [];
             if (entrance) details.push(`подъезд ${entrance}`);
@@ -535,7 +556,7 @@
             const newOrder = {
                 id: Date.now().toString(), clientId: MY_USER_ID, category: currentCategory,
                 phone: phone, address: fullAddress, desc: desc, price: price,
-                photo: uploadedPhotoBase64, // Сохраняем фото
+                photo: uploadedPhotoBase64,
                 status: 'searching', masterId: null
             };
 
@@ -598,7 +619,7 @@
             } else {
                 activeList.innerHTML = activeOrders.map(order => {
                     let cleanPhone = order.phone.replace(/\D/g,''); 
-                    let encodedAddress = encodeURIComponent(order.address.split('(')[0]); // Берем чистый адрес без кв для 2гис
+                    let encodedAddress = encodeURIComponent(order.address.split('(')[0]); 
                     return `
                     <div class="order-card in-progress">
                         <h3>${order.category} <span style="float:right; color:var(--accent)">${order.price} ₸</span></h3>
@@ -646,7 +667,7 @@
             }
         }
 
-        // Инициализация при загрузке
+        // Инициализация
         initApp();
     </script>
 </body>
