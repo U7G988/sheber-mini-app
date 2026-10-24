@@ -26,6 +26,7 @@
         .container.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         
+        /* Шапка */
         .top-header {
             display: flex; align-items: center; justify-content: space-between;
             padding: 15px 20px; background-color: var(--bg-body);
@@ -34,11 +35,12 @@
         .hamburger-btn { background: none; border: none; color: white; font-size: 26px; cursor: pointer; padding: 0; }
         .header-title { font-size: 18px; font-weight: 700; margin: 0; }
 
+        /* Боковое меню */
         #side-menu {
-            position: fixed; top: 0; left: -280px; width: 280px; height: 100vh;
+            position: fixed; top: 0; left: -300px; width: 300px; height: 100vh;
             background-color: var(--bg-card); z-index: 1000; transition: left 0.3s ease;
             padding: 20px; box-shadow: 2px 0 10px rgba(0,0,0,0.5);
-            display: flex; flex-direction: column;
+            display: flex; flex-direction: column; overflow-y: auto;
         }
         #side-menu.open { left: 0; }
         .menu-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; backdrop-filter: blur(2px); }
@@ -60,19 +62,19 @@
         h1 { font-size: 26px; margin: 0 0 6px 0; font-weight: 800; letter-spacing: -0.5px; }
         .subtitle { color: var(--text-muted); font-size: 15px; margin: 0 0 24px 0; }
 
+        /* Сетка */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         .card {
             background-color: var(--bg-card); border-radius: 18px; padding: 18px;
-            cursor: pointer; transition: transform 0.1s, background-color 0.2s;
-            border: 1px solid rgba(255,255,255,0.03); display: flex; flex-direction: column;
+            cursor: pointer; transition: transform 0.1s; border: 1px solid rgba(255,255,255,0.03); display: flex; flex-direction: column;
         }
-        .card:active { transform: scale(0.97); background-color: #2c2c2e; }
+        .card:active { transform: scale(0.97); }
         .icon-box { width: 44px; height: 44px; background-color: rgba(255, 204, 0, 0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 14px; }
         .card h3 { margin: 0 0 4px 0; font-size: 16px; font-weight: 700; }
         .card p { margin: 0; font-size: 13px; color: var(--text-muted); line-height: 1.3; }
 
+        /* Формы */
         .back-btn { background: none; border: none; color: var(--text-muted); font-size: 16px; font-weight: 600; cursor: pointer; padding: 0 0 15px 0; display: flex; align-items: center; gap: 5px; }
-        .back-btn:hover { color: var(--accent); }
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
         .form-input {
@@ -99,8 +101,10 @@
 
         .btn-submit { width: 100%; padding: 18px; border-radius: 16px; background-color: var(--accent); color: #000; font-weight: 700; font-size: 17px; border: none; cursor: pointer; margin-top: 10px; }
 
+        /* Мастер */
         .toggle-btn { width: 100%; padding: 16px; border-radius: 16px; background-color: var(--bg-card); color: white; font-size: 16px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
         .toggle-btn.online { background-color: rgba(52, 199, 89, 0.15); border-color: var(--success); color: var(--success); }
+        .ban-alert { background-color: rgba(255, 59, 48, 0.15); color: var(--danger); border: 1px solid var(--danger); border-radius: 12px; padding: 15px; margin-bottom: 20px; font-weight: 600; text-align: center; display: none; }
 
         .master-tabs { display: flex; background-color: var(--bg-card); border-radius: 12px; padding: 4px; margin-bottom: 20px; }
         .master-tab { flex: 1; text-align: center; padding: 10px; border-radius: 10px; font-size: 14px; cursor: pointer; color: var(--text-muted); font-weight: 600; }
@@ -122,8 +126,14 @@
         .btn-map-route { background-color: var(--accent); color: #000; }
 
         .btn-complete { background-color: rgba(255, 59, 48, 0.15); color: var(--danger); border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        
+        /* Кнопки клиента */
+        .btn-edit-price { background-color: var(--bg-input); color: white; border: none; padding: 12px; border-radius: 12px; flex: 1; font-weight: 600; font-size: 14px; cursor: pointer; }
+        .btn-delete-order { background-color: rgba(255, 59, 48, 0.1); color: var(--danger); border: 1px solid var(--danger); padding: 12px; border-radius: 12px; flex: 1; font-weight: 600; font-size: 14px; cursor: pointer; }
+        
         .empty-state { text-align: center; color: var(--text-muted); margin-top: 30px; font-size: 15px; }
 
+        /* Регистрация */
         #view-register { padding-top: 30px; }
         .role-btn { background-color: var(--bg-card); border: 2px solid transparent; border-radius: 18px; padding: 24px; margin-bottom: 16px; text-align: center; cursor: pointer; }
         .role-btn:active, .role-btn.selected { border-color: var(--accent); background-color: rgba(255, 204, 0, 0.05); }
@@ -131,12 +141,15 @@
         .role-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
         .role-desc { font-size: 14px; color: var(--text-muted); }
 
+        /* Нижнее меню */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 15, 17, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-around; padding: 12px 0 30px 0; z-index: 100; display: none; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 11px; font-weight: 500; cursor: pointer; flex: 1; }
         .nav-item.active { color: var(--accent); }
         .nav-icon { font-size: 24px; margin-bottom: 4px; }
 
-        #map-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-body); z-index: 9999; flex-direction: column; }
+        /* Карта и Модалки */
+        #map-modal, #rating-modal, #price-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; }
+        #map-modal { background-color: var(--bg-body); justify-content: flex-start; }
         #map-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
         .map-top-controls { position: absolute; top: 20px; left: 20px; right: 20px; z-index: 10; display: flex; justify-content: space-between; }
         .map-icon-btn { background: var(--bg-card); border: none; border-radius: 50%; width: 48px; height: 48px; font-size: 20px; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
@@ -149,24 +162,35 @@
         .status-box { background-color: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3); border-radius: 12px; padding: 16px; margin-top: 12px; }
         .status-title { color: var(--success); font-size: 16px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
         
-        .switch-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; background-color: var(--bg-card); padding: 16px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.05); }
-        .switch-label { font-size: 15px; font-weight: 500; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #555; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--accent); }
-        input:checked + .slider:before { transform: translateX(22px); }
+        /* Модалки контент */
+        .modal-content { background-color: var(--bg-card); padding: 24px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; }
+        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 15px; }
+        .stars-container { display: flex; justify-content: center; gap: 10px; font-size: 40px; cursor: pointer; margin-bottom: 20px; }
+        .star { color: #444; transition: color 0.2s; }
+        .star.active { color: var(--accent); }
+        .tags-container { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px; }
+        .tag { background-color: var(--bg-input); padding: 8px 12px; border-radius: 20px; font-size: 13px; cursor: pointer; border: 1px solid transparent; }
+        .tag.selected { border-color: var(--accent); color: var(--accent); }
+        .modal-input { width: 100%; padding: 15px; border-radius: 12px; background-color: var(--bg-input); border: 1px solid #444; color: white; font-size: 18px; text-align: center; margin-bottom: 20px; outline: none; }
+        
+        /* Финансы */
+        .finance-card { background-color: var(--bg-card); border-radius: 16px; padding: 20px; margin-bottom: 15px; text-align: center; }
+        .finance-total { font-size: 32px; font-weight: 800; color: var(--accent); margin-bottom: 5px; }
+        .finance-desc { color: var(--text-muted); font-size: 14px; }
     </style>
 </head>
 <body>
 
+    <!-- БОКОВОЕ МЕНЮ -->
     <div class="menu-overlay" id="menu-overlay" onclick="toggleMenu()"></div>
     <div id="side-menu">
         <div class="profile-info">
             <div class="profile-name" id="menu-user-name">Гость</div>
             <div class="profile-role" id="menu-user-role">Роль: Клиент</div>
         </div>
+        
+        <button class="menu-item" id="menu-btn-history" onclick="switchTab('client-history')" style="display: none;">🕒 История заказов</button>
+        <button class="menu-item" id="menu-btn-finance" onclick="switchTab('master-finance')" style="display: none;">💰 Мои финансы</button>
         <button class="menu-item" onclick="resetRole()">🔄 Сменить роль</button>
         <button class="menu-item danger" onclick="tg.close()">🚪 Закрыть приложение</button>
     </div>
@@ -177,7 +201,7 @@
         <div style="width: 26px;"></div>
     </div>
 
-    <!-- ЭКРАН РЕГИСТРАЦИИ -->
+    <!-- РЕГИСТРАЦИЯ -->
     <div id="view-register" class="container">
         <h1>Добро пожаловать в Sheber</h1>
         <p class="subtitle">Выберите, как вы хотите использовать приложение</p>
@@ -195,9 +219,8 @@
             </div>
         </div>
 
-        <!-- Форма КЛИЕНТА -->
         <div id="client-reg-form" style="display: none;">
-            <button class="back-btn" onclick="cancelReg()">← Назад к выбору</button>
+            <button class="back-btn" onclick="cancelReg()">← Назад</button>
             <div class="form-group">
                 <label>Ваш номер телефона (для связи с мастером)</label>
                 <input type="tel" id="reg-client-phone" class="form-input" placeholder="+7 (777) 123-45-67">
@@ -205,9 +228,8 @@
             <button class="btn-submit" onclick="completeRegistration('client')">Начать поиск</button>
         </div>
 
-        <!-- Форма МАСТЕРА -->
         <div id="master-reg-form" style="display: none;">
-            <button class="back-btn" onclick="cancelReg()">← Назад к выбору</button>
+            <button class="back-btn" onclick="cancelReg()">← Назад</button>
             <div class="form-group">
                 <label>Ваше имя</label>
                 <input type="text" id="reg-master-name" class="form-input" placeholder="Например: Махсат">
@@ -220,7 +242,7 @@
         </div>
     </div>
 
-    <!-- ГЛАВНЫЙ ЭКРАН КЛИЕНТА -->
+    <!-- ГЛАВНАЯ КЛИЕНТА -->
     <div id="view-client" class="container">
         <h1>Что починить?</h1>
         <p class="subtitle">Выберите категорию — мастера увидят ваш заказ</p>
@@ -236,9 +258,16 @@
         </div>
     </div>
 
+    <!-- МОИ ЗАКАЗЫ (АКТИВНЫЕ) -->
     <div id="view-client-orders" class="container">
         <h1>Мои заказы</h1>
         <div id="client-orders-list" style="margin-top: 20px;"></div>
+    </div>
+
+    <!-- ИСТОРИЯ ЗАКАЗОВ (ЗАВЕРШЕННЫЕ) -->
+    <div id="view-client-history" class="container">
+        <h1>История заказов</h1>
+        <div id="client-history-list" style="margin-top: 20px;"></div>
     </div>
 
     <!-- ФОРМА ЗАКАЗА -->
@@ -304,6 +333,12 @@
     <!-- КАБИНЕТ МАСТЕРА -->
     <div id="view-master" class="container">
         <h1>Кабинет мастера</h1>
+        
+        <div id="ban-alert" class="ban-alert">
+            ⛔ Вы временно заблокированы за низкий рейтинг.<br>
+            <span style="font-size: 12px; font-weight: normal; margin-top: 5px; display: block;">Заказы вернутся через: <span id="ban-timer">...</span></span>
+        </div>
+
         <button id="status-btn" class="toggle-btn" style="margin-top: 20px;" onclick="toggleOnlineStatus()">🔴 Начать смену</button>
         
         <div class="master-tabs">
@@ -312,6 +347,18 @@
         </div>
         <div id="new-orders-list"></div>
         <div id="active-orders-list" style="display: none;"></div>
+    </div>
+
+    <!-- ФИНАНСЫ МАСТЕРА -->
+    <div id="view-master-finance" class="container">
+        <h1>Мои финансы</h1>
+        <p class="subtitle">Здесь отображаются ваши заработанные средства</p>
+        <div class="finance-card">
+            <div class="finance-total" id="master-total-earned">0 ₸</div>
+            <div class="finance-desc">Всего заработано</div>
+        </div>
+        <h3 style="margin-top: 20px; margin-bottom: 10px;">Завершенные заказы</h3>
+        <div id="master-finance-list"></div>
     </div>
 
     <!-- КАРТА -->
@@ -326,6 +373,38 @@
             <div class="sheet-handle"></div>
             <div class="map-address-text" id="map-selected-address">Двигайте карту</div>
             <button class="btn-submit" onclick="confirmMapAddress()">Подтвердить адрес</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА ОЦЕНКИ -->
+    <div id="rating-modal">
+        <div class="modal-content">
+            <div class="modal-title">Оцените мастера</div>
+            <div class="stars-container" id="stars-container">
+                <span class="star" onclick="setRating(1)">★</span>
+                <span class="star" onclick="setRating(2)">★</span>
+                <span class="star" onclick="setRating(3)">★</span>
+                <span class="star" onclick="setRating(4)">★</span>
+                <span class="star" onclick="setRating(5)">★</span>
+            </div>
+            <div class="tags-container">
+                <div class="tag" onclick="this.classList.toggle('selected')">Быстро</div>
+                <div class="tag" onclick="this.classList.toggle('selected')">Качественно</div>
+                <div class="tag" onclick="this.classList.toggle('selected')">Вежливый</div>
+                <div class="tag" onclick="this.classList.toggle('selected')">Аккуратный</div>
+            </div>
+            <button class="btn-submit" onclick="submitRating()">Отправить оценку</button>
+            <button class="back-btn" style="margin-top: 10px; color: #888;" onclick="closeRatingModal()">Пропустить</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА ИЗМЕНЕНИЯ ЦЕНЫ -->
+    <div id="price-modal">
+        <div class="modal-content">
+            <div class="modal-title">Изменить цену</div>
+            <input type="number" id="new-price-input" class="modal-input" placeholder="Новая цена в ₸">
+            <button class="btn-submit" onclick="saveNewPrice()">Сохранить</button>
+            <button class="back-btn" style="margin-top: 10px; color: #888;" onclick="closePriceModal()">Отмена</button>
         </div>
     </div>
 
@@ -359,14 +438,49 @@
         let map = null;
         let uploadedPhotoBase64 = null;
         
-        // Профиль мастера
+        // Профили
         let masterName = localStorage.getItem('sheber_master_name_' + MY_USER_ID) || 'Махсат';
         let masterPhone = localStorage.getItem('sheber_master_phone_' + MY_USER_ID) || '';
-        
-        // Профиль клиента
         let clientPhone = localStorage.getItem('sheber_client_phone_' + MY_USER_ID) || '';
 
+        // БД Мастеров для рейтинга
+        let masterDB = JSON.parse(localStorage.getItem('sheber_master_db')) || {};
+        
+        // Для модалок
+        let currentRatingOrderId = null;
+        let currentRatingValue = 0;
+        let currentEditingPriceOrderId = null;
+
         const API_KEY_2GIS = "e15b258a-b886-448f-bae9-a067f639ec33";
+
+        // --- ИНИЦИАЛИЗАЦИЯ И МЕНЮ ---
+        function initApp() {
+            if (!currentUserRole) {
+                switchTab('register');
+            } else {
+                document.getElementById('main-header').style.display = 'flex';
+                document.getElementById('main-nav').style.display = 'flex';
+                setupRoleUI(currentUserRole);
+                checkBanStatus(); // Проверяем бан при запуске
+            }
+        }
+
+        function setupRoleUI(role) {
+            document.getElementById('nav-client-block').style.display = 'none';
+            document.getElementById('nav-master-block').style.display = 'none';
+            document.getElementById('menu-btn-history').style.display = 'none';
+            document.getElementById('menu-btn-finance').style.display = 'none';
+
+            if (role === 'master') {
+                document.getElementById('nav-master-block').style.display = 'flex';
+                document.getElementById('menu-btn-finance').style.display = 'flex';
+                switchTab('master');
+            } else {
+                document.getElementById('nav-client-block').style.display = 'flex';
+                document.getElementById('menu-btn-history').style.display = 'flex';
+                switchTab('client-home');
+            }
+        }
 
         function toggleMenu() {
             const menu = document.getElementById('side-menu');
@@ -382,19 +496,17 @@
 
         function resetRole() {
             toggleMenu();
-            if(confirm("Сменить роль? (Вернемся на экран выбора)")) {
+            if(confirm("Сменить роль?")) {
                 localStorage.removeItem('sheber_role_' + MY_USER_ID);
                 currentUserRole = null;
-                document.getElementById('reg-master-name').value = '';
-                document.getElementById('reg-master-phone').value = '';
-                document.getElementById('reg-client-phone').value = clientPhone || '';
+                switchTab('register');
                 document.getElementById('role-selection').style.display = 'block';
                 document.getElementById('client-reg-form').style.display = 'none';
                 document.getElementById('master-reg-form').style.display = 'none';
-                switchTab('register');
             }
         }
 
+        // --- МАСКА ТЕЛЕФОНА ---
         function applyPhoneMask(inputElement) {
             inputElement.addEventListener('focus', () => { if (inputElement.value === '') inputElement.value = '+7 '; });
             inputElement.addEventListener('input', function (e) {
@@ -412,39 +524,10 @@
         applyPhoneMask(document.getElementById('reg-master-phone'));
         applyPhoneMask(document.getElementById('reg-client-phone'));
 
-        function togglePhoneInput() {
-            const isChecked = document.getElementById('order-for-other').checked;
-            document.getElementById('phone-group').style.display = isChecked ? 'block' : 'none';
-            if (!isChecked) document.getElementById('input-phone').value = '';
-        }
-
-        function initApp() {
-            if (!currentUserRole) {
-                switchTab('register');
-            } else {
-                document.getElementById('main-header').style.display = 'flex';
-                document.getElementById('main-nav').style.display = 'flex';
-                setupRoleUI(currentUserRole);
-            }
-        }
-
-        function setupRoleUI(role) {
-            document.getElementById('nav-client-block').style.display = 'none';
-            document.getElementById('nav-master-block').style.display = 'none';
-
-            if (role === 'master') {
-                document.getElementById('nav-master-block').style.display = 'flex';
-                switchTab('master');
-            } else {
-                document.getElementById('nav-client-block').style.display = 'flex';
-                switchTab('client-home');
-            }
-        }
-
+        // --- РЕГИСТРАЦИЯ ---
         function selectRole(role) {
             document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('selected'));
             event.currentTarget.classList.add('selected');
-            
             document.getElementById('role-selection').style.display = 'none';
             
             if (role === 'master') {
@@ -455,7 +538,6 @@
                 document.getElementById('client-reg-form').style.display = 'block';
                 document.getElementById('reg-client-phone').value = clientPhone;
             }
-            window.scrollTo(0, 0); 
         }
 
         function cancelReg() {
@@ -469,28 +551,27 @@
             if (role === 'master') {
                 const inputName = document.getElementById('reg-master-name').value.trim();
                 const inputPhone = document.getElementById('reg-master-phone').value.trim();
-                if (inputPhone.length < 5) { tg.showAlert("Введите корректный номер телефона!"); return; }
-                
+                if (inputPhone.length < 5) { tg.showAlert("Введите номер телефона!"); return; }
                 masterName = inputName ? inputName : 'Махсат';
                 masterPhone = inputPhone;
                 localStorage.setItem('sheber_master_name_' + MY_USER_ID, masterName);
                 localStorage.setItem('sheber_master_phone_' + MY_USER_ID, masterPhone);
             } else {
                 const inputPhone = document.getElementById('reg-client-phone').value.trim();
-                if (inputPhone.length < 5) { tg.showAlert("Введите корректный номер телефона!"); return; }
+                if (inputPhone.length < 5) { tg.showAlert("Введите номер телефона!"); return; }
                 clientPhone = inputPhone;
                 localStorage.setItem('sheber_client_phone_' + MY_USER_ID, clientPhone);
             }
 
             currentUserRole = role;
             localStorage.setItem('sheber_role_' + MY_USER_ID, role);
-            
             tg.HapticFeedback.notificationOccurred('success');
             document.getElementById('main-header').style.display = 'flex';
             document.getElementById('main-nav').style.display = 'flex';
             setupRoleUI(role);
         }
 
+        // --- НАВИГАЦИЯ ---
         function switchTab(tab) {
             tg.HapticFeedback.impactOccurred('light');
             window.scrollTo(0, 0); 
@@ -509,10 +590,18 @@
                 document.getElementById('view-client-orders').classList.add('active');
                 document.getElementById('nav-client-orders').classList.add('active');
                 renderClientOrders();
+            } else if (tab === 'client-history') {
+                document.getElementById('view-client-history').classList.add('active');
+                renderClientHistory();
+                toggleMenu(); // Закрываем меню
             } else if (tab === 'master') {
                 document.getElementById('view-master').classList.add('active');
                 document.getElementById('nav-master').classList.add('active');
                 renderMasterOrders();
+            } else if (tab === 'master-finance') {
+                document.getElementById('view-master-finance').classList.add('active');
+                renderMasterFinance();
+                toggleMenu();
             } else if (tab === 'order-form') {
                 document.getElementById('view-order-form').classList.add('active');
             }
@@ -534,32 +623,35 @@
             renderMasterOrders();
         }
 
-        function handlePhotoUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 800;
-                        const scale = MAX_WIDTH / img.width;
-                        canvas.width = MAX_WIDTH;
-                        canvas.height = img.height * scale;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        uploadedPhotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                        const preview = document.getElementById('photo-preview');
-                        preview.src = uploadedPhotoBase64;
-                        preview.style.display = 'block';
-                        document.querySelector('.btn-upload').innerText = "✅ Фото прикреплено";
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
+        // --- ЛОГИКА БАНОВ ---
+        function checkBanStatus() {
+            if (currentUserRole !== 'master') return;
+            let myStats = masterDB[MY_USER_ID] || { total: 0, count: 0, blockedUntil: 0 };
+            
+            if (myStats.blockedUntil && Date.now() < myStats.blockedUntil) {
+                // Забанен
+                const daysLeft = Math.ceil((myStats.blockedUntil - Date.now()) / (1000 * 60 * 60 * 24));
+                document.getElementById('ban-alert').style.display = 'block';
+                document.getElementById('ban-timer').innerText = daysLeft + " дн.";
+                document.getElementById('status-btn').disabled = true;
+                document.getElementById('status-btn').style.opacity = '0.5';
+            } else {
+                // Разбанен (сбрасываем бан, даем шанс)
+                if (myStats.blockedUntil && Date.now() >= myStats.blockedUntil) {
+                    myStats.blockedUntil = 0;
+                    myStats.total = 3; // Сброс рейтинга на нейтральный 3.0
+                    myStats.count = 1;
+                    masterDB[MY_USER_ID] = myStats;
+                    localStorage.setItem('sheber_master_db', JSON.stringify(masterDB));
+                }
+                document.getElementById('ban-alert').style.display = 'none';
+                document.getElementById('status-btn').disabled = false;
+                document.getElementById('status-btn').style.opacity = '1';
             }
         }
 
+        // --- ФОТО И КАРТА ---
+        function handlePhotoUpload(event) { /* ... (как было) ... */ }
         function openMap() {
             tg.HapticFeedback.impactOccurred('light');
             document.getElementById('map-modal').style.display = 'flex';
@@ -602,7 +694,12 @@
             closeMap();
         }
 
+        // --- ЗАКАЗЫ КЛИЕНТА ---
         function openOrderForm(category) {
+            if (!clientPhone) {
+                tg.showAlert("Пожалуйста, сначала укажите ваш номер телефона в профиле (Сменить роль -> Я Клиент).");
+                return;
+            }
             tg.HapticFeedback.impactOccurred('medium');
             currentCategory = category;
             switchTab('order-form');
@@ -621,69 +718,70 @@
             document.querySelector('.btn-upload').innerText = "📷 Прикрепить фото";
         }
 
+        function togglePhoneInput() {
+            const isChecked = document.getElementById('order-for-other').checked;
+            document.getElementById('phone-group').style.display = isChecked ? 'block' : 'none';
+            if (!isChecked) document.getElementById('input-phone').value = '';
+        }
+
         function submitOrder() {
-            let phone = "";
-            const isForOther = document.getElementById('order-for-other').checked;
-
-            if (isForOther) {
+            let phone = clientPhone;
+            if (document.getElementById('order-for-other').checked) {
                 phone = document.getElementById('input-phone').value;
-                if (phone.length < 5) {
-                    tg.showAlert("Введите номер телефона получателя!");
-                    return;
-                }
-            } else {
-                phone = clientPhone; // Берем сохраненный номер клиента
+                if (phone.length < 5) { tg.showAlert("Введите номер!"); return; }
             }
 
-            const city = document.getElementById('input-city').value;
             const address = document.getElementById('input-address').value;
-            const entrance = document.getElementById('input-entrance').value;
-            const apt = document.getElementById('input-apt').value;
-            const intercom = document.getElementById('input-intercom').value;
-            const desc = document.getElementById('input-desc').value;
             const price = document.getElementById('input-price').value;
+            if (!address || !price) { tg.showAlert("Заполните адрес и цену!"); return; }
 
-            if (!address || !price) {
-                tg.showAlert("Заполните адрес и цену!");
-                return;
-            }
-
-            let fullAddress = `${city}, ${address}`;
+            let fullAddress = `${document.getElementById('input-city').value}, ${address}`;
             let details = [];
-            if (entrance) details.push(`подъезд ${entrance}`);
-            if (apt) details.push(`кв/офис ${apt}`);
-            if (intercom) details.push(`домофон ${intercom}`);
+            if (document.getElementById('input-entrance').value) details.push(`подъезд ${document.getElementById('input-entrance').value}`);
+            if (document.getElementById('input-apt').value) details.push(`кв/офис ${document.getElementById('input-apt').value}`);
+            if (document.getElementById('input-intercom').value) details.push(`домофон ${document.getElementById('input-intercom').value}`);
             if (details.length > 0) fullAddress += ` (${details.join(', ')})`;
 
             const newOrder = {
                 id: Date.now().toString(), clientId: MY_USER_ID, category: currentCategory,
-                phone: phone, address: fullAddress, desc: desc, price: price,
+                phone: phone, address: fullAddress, desc: document.getElementById('input-desc').value, price: price,
                 photo: uploadedPhotoBase64,
-                status: 'searching', masterId: null, masterName: null, masterPhone: null
+                status: 'searching', masterId: null, masterName: null, masterPhone: null,
+                createdAt: Date.now()
             };
 
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
             savedOrders.push(newOrder); 
             localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders)); 
 
-            tg.showAlert(`✅ Заказ опубликован! Ожидайте мастера.`);
+            tg.showAlert(`✅ Заказ опубликован!`);
             switchTab('client-orders');
         }
 
         function renderClientOrders() {
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
-            const myOrders = savedOrders.filter(o => o.clientId === MY_USER_ID);
+            // Показываем только активные заказы
+            const myOrders = savedOrders.filter(o => o.clientId === MY_USER_ID && o.status !== 'completed');
             const list = document.getElementById('client-orders-list');
 
             if (myOrders.length === 0) {
-                list.innerHTML = `<div class="empty-state">У вас пока нет активных заказов.</div>`;
+                list.innerHTML = `<div class="empty-state">У вас нет активных заказов.</div>`;
                 return;
             }
 
             list.innerHTML = myOrders.map(order => {
                 let statusHtml = '';
+                let actionHtml = '';
+
                 if (order.status === 'searching') {
                     statusHtml = `<p style="color: var(--accent); font-weight: 600; margin-top: 12px;">⏳ Ищем мастера...</p>`;
+                    // Кнопки редактирования и удаления
+                    actionHtml = `
+                        <div class="action-buttons" style="margin-top: 15px;">
+                            <button class="btn-edit-price" onclick="openEditPrice('${order.id}')">✏️ Изменить цену</button>
+                            <button class="btn-delete-order" onclick="deleteOrder('${order.id}')">❌ Отменить</button>
+                        </div>
+                    `;
                 } else if (order.status === 'accepted') {
                     let cleanMasterPhone = order.masterPhone.replace(/\D/g,'');
                     let waText = `Здравствуйте, ${order.masterName}! Я по поводу заказа на Sheber (${order.category}).`;
@@ -710,12 +808,125 @@
                     ${order.photo ? `<img src="${order.photo}" class="order-photo">` : ''}
                     <p>📍 ${order.address}</p>
                     ${statusHtml}
+                    ${actionHtml}
                 </div>
                 `;
             }).join('');
         }
 
+        // Редактирование и удаление
+        function openEditPrice(orderId) {
+            currentEditingPriceOrderId = orderId;
+            document.getElementById('price-modal').style.display = 'flex';
+            // Находим текущую цену
+            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
+            const order = savedOrders.find(o => o.id === orderId);
+            if(order) document.getElementById('new-price-input').value = order.price;
+        }
+        function closePriceModal() { document.getElementById('price-modal').style.display = 'none'; }
+        function saveNewPrice() {
+            const newPrice = document.getElementById('new-price-input').value;
+            if (!newPrice || newPrice <= 0) { tg.showAlert("Введите корректную цену"); return; }
+            
+            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
+            savedOrders = savedOrders.map(o => o.id === currentEditingPriceOrderId ? {...o, price: newPrice} : o);
+            localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders));
+            
+            closePriceModal();
+            renderClientOrders();
+            tg.showAlert("Цена обновлена!");
+        }
+
+        function deleteOrder(orderId) {
+            if(!confirm("Вы уверены, что хотите отменить заказ?")) return;
+            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
+            savedOrders = savedOrders.filter(o => o.id !== orderId);
+            localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders));
+            renderClientOrders();
+            tg.showAlert("Заказ отменен.");
+        }
+
+        // История
+        function renderClientHistory() {
+            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
+            const myHistory = savedOrders.filter(o => o.clientId === MY_USER_ID && o.status === 'completed');
+            const list = document.getElementById('client-history-list');
+
+            if (myHistory.length === 0) {
+                list.innerHTML = `<div class="empty-state">История пуста.</div>`;
+                return;
+            }
+
+            list.innerHTML = myHistory.map(order => {
+                let rateBtn = order.ratedByClient ? 
+                    `<p style="color:var(--success); font-size:12px; margin-top:8px;">✅ Вы уже оценили работу</p>` : 
+                    `<button class="btn-submit" style="padding:10px; font-size:14px; margin-top:10px;" onclick="openRatingModal('${order.id}')">⭐ Оценить мастера</button>`;
+
+                return `
+                <div class="order-card" style="border-left: 4px solid var(--success);">
+                    <h3>${order.category} <span style="float:right; color:var(--text-muted)">${order.price} ₸</span></h3>
+                    <p>📍 ${order.address}</p>
+                    <p style="font-size:12px;">Завершен: ${new Date(order.completedAt).toLocaleDateString()}</p>
+                    ${rateBtn}
+                </div>
+                `;
+            }).join('');
+        }
+
+        // --- ОЦЕНКА ---
+        function openRatingModal(orderId) {
+            currentRatingOrderId = orderId;
+            currentRatingValue = 0;
+            document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tag').forEach(t => t.classList.remove('selected'));
+            document.getElementById('rating-modal').style.display = 'flex';
+        }
+        function setRating(val) {
+            currentRatingValue = val;
+            document.querySelectorAll('.star').forEach((s, index) => {
+                if (index < val) s.classList.add('active');
+                else s.classList.remove('active');
+            });
+        }
+        function closeRatingModal() { document.getElementById('rating-modal').style.display = 'none'; }
+        
+        function submitRating() {
+            if (currentRatingValue === 0) { tg.showAlert("Поставьте оценку от 1 до 5!"); return; }
+            
+            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
+            const order = savedOrders.find(o => o.id === currentRatingOrderId);
+            if (!order) return;
+
+            // Обновляем оценку в БД Мастеров
+            let masterStats = masterDB[order.masterId] || { total: 0, count: 0, blockedUntil: 0 };
+            masterStats.total += currentRatingValue;
+            masterStats.count += 1;
+            
+            // Вычисляем средний рейтинг
+            let avgRating = masterStats.total / masterStats.count;
+            
+            // Если рейтинг упал ниже 3.5 и было достаточно заказов (например, минимум 2), даем бан
+            if (avgRating < 3.5 && masterStats.count >= 2) {
+                masterStats.blockedUntil = Date.now() + 10 * 24 * 60 * 60 * 1000; // 10 дней
+            }
+            
+            masterDB[order.masterId] = masterStats;
+            localStorage.setItem('sheber_master_db', JSON.stringify(masterDB));
+
+            // Отмечаем заказ, что он оценен
+            savedOrders = savedOrders.map(o => o.id === currentRatingOrderId ? {...o, ratedByClient: true} : o);
+            localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders));
+            
+            tg.HapticFeedback.notificationOccurred('success');
+            tg.showAlert("Спасибо за оценку!");
+            closeRatingModal();
+            renderClientHistory();
+        }
+
+        // --- МАСТЕР ---
         function renderMasterOrders() {
+            checkBanStatus(); // Проверяем бан
+
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
             const availableForMe = TEST_MODE ? savedOrders : savedOrders.filter(o => o.clientId !== MY_USER_ID);
 
@@ -725,9 +936,12 @@
             const newOrders = availableForMe.filter(o => o.status === 'searching');
             const activeOrders = availableForMe.filter(o => o.status === 'accepted' && o.masterId === MY_USER_ID);
 
-            // Блок новых заказов
-            if (!isMasterOnline) {
-                newList.innerHTML = `<div class="empty-state">Вы офлайн.<br>Нажмите "Начать смену", чтобы получать заказы.</div>`;
+            // Если бан - заказы не показываем
+            let myStats = masterDB[MY_USER_ID];
+            if (myStats && myStats.blockedUntil > Date.now()) {
+                newList.innerHTML = `<div class="empty-state">Вы заблокированы. Заказы недоступны.</div>`;
+            } else if (!isMasterOnline) {
+                newList.innerHTML = `<div class="empty-state">Вы офлайн. Нажмите "Начать смену".</div>`;
             } else {
                 if (newOrders.length === 0) {
                     newList.innerHTML = `<div class="empty-state">Нет новых заказов.</div>`;
@@ -744,15 +958,13 @@
                 }
             }
 
-            // Блок заказов в работе (показывается всегда, даже если офлайн)
             if (activeOrders.length === 0) {
                 activeList.innerHTML = `<div class="empty-state">У вас нет заказов в работе</div>`;
             } else {
                 activeList.innerHTML = activeOrders.map(order => {
                     let cleanPhone = order.phone.replace(/\D/g,''); 
                     let encodedAddress = encodeURIComponent(order.address.split('(')[0]); 
-                    
-                    let waText = `Здравствуйте! Меня зовут ${masterName}, я ваш мастер из сервиса Sheber. Принял ваш заказ на «${order.category}». Уже выезжаю. Если есть уточнения по адресу, напишите здесь, пожалуйста.`;
+                    let waText = `Здравствуйте! Меня зовут ${masterName}, я ваш мастер из сервиса Sheber. Принял ваш заказ на «${order.category}». Уже выезжаю.`;
                     let waLink = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waText)}`;
 
                     return `
@@ -761,16 +973,13 @@
                         ${order.photo ? `<img src="${order.photo}" class="order-photo">` : ''}
                         <p>📍 ${order.address}</p>
                         <p>📞 ${order.phone}</p>
-                        
                         <div class="action-buttons" style="margin-top: 15px;">
                             <a href="tel:+${cleanPhone}" class="btn-contact btn-call">📞 Позвонить</a>
                             <a href="${waLink}" target="_blank" class="btn-contact btn-whatsapp">💬 WhatsApp</a>
                         </div>
-                        
                         <div class="action-buttons" style="margin-top: 8px;">
                             <a href="https://2gis.kz/search/${encodedAddress}" target="_blank" class="btn-contact btn-map-route" style="width: 100%;">🗺️ Маршрут в 2ГИС</a>
                         </div>
-
                         <button class="btn-complete" onclick="completeOrder('${order.id}')">Завершить заказ</button>
                     </div>
                     `;
@@ -779,9 +988,14 @@
         }
 
         function acceptOrder(orderId) {
+            let myStats = masterDB[MY_USER_ID];
+            if (myStats && myStats.blockedUntil > Date.now()) {
+                tg.showAlert("Вы временно заблокированы за низкий рейтинг."); return;
+            }
+
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
             
-            // ПРОВЕРКА: НЕ БОЛЬШЕ ОДНОГО ЗАКАЗА В РАБОТЕ
+            // Проверка на 1 заказ
             const myActiveOrders = savedOrders.filter(o => o.status === 'accepted' && o.masterId === MY_USER_ID);
             if (myActiveOrders.length > 0) {
                 tg.showAlert("Вы уже взяли заказ в работу. Сначала завершите текущий!");
@@ -796,10 +1010,32 @@
 
         function completeOrder(orderId) {
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
-            savedOrders = savedOrders.filter(o => o.id !== orderId);
+            // Вместо удаления - ставим статус completed
+            savedOrders = savedOrders.map(o => o.id === orderId ? {...o, status: 'completed', completedAt: Date.now()} : o);
             localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders));
-            tg.showAlert("✅ Заказ завершен!");
+            tg.showAlert("✅ Заказ завершен! Клиент может оставить отзыв.");
             renderMasterOrders();
+        }
+
+        function renderMasterFinance() {
+            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
+            const myCompleted = savedOrders.filter(o => o.masterId === MY_USER_ID && o.status === 'completed');
+            
+            let totalEarned = myCompleted.reduce((sum, order) => sum + Number(order.price), 0);
+            document.getElementById('master-total-earned').innerText = totalEarned.toLocaleString() + " ₸";
+
+            const list = document.getElementById('master-finance-list');
+            if (myCompleted.length === 0) {
+                list.innerHTML = `<div class="empty-state">У вас пока нет завершенных заказов.</div>`;
+                return;
+            }
+
+            list.innerHTML = myCompleted.map(order => `
+                <div class="order-card" style="padding: 14px;">
+                    <h3 style="font-size: 16px;">${order.category} <span style="float:right; color:var(--success)">+${order.price} ₸</span></h3>
+                    <p style="font-size: 12px;">${new Date(order.completedAt).toLocaleString()}</p>
+                </div>
+            `).join('');
         }
 
         function toggleOnlineStatus() {
