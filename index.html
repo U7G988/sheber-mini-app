@@ -49,6 +49,7 @@
         .profile-info { padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
         .profile-name { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
         .profile-role { color: var(--accent); font-size: 14px; font-weight: 600; text-transform: uppercase; }
+        .profile-rating { color: var(--accent); font-size: 14px; font-weight: 600; margin-top: 5px; display: flex; align-items: center; gap: 5px; }
         
         .menu-item {
             display: flex; align-items: center; gap: 12px; padding: 16px;
@@ -106,6 +107,13 @@
         .toggle-btn.online { background-color: rgba(52, 199, 89, 0.15); border-color: var(--success); color: var(--success); }
         .ban-alert { background-color: rgba(255, 59, 48, 0.15); color: var(--danger); border: 1px solid var(--danger); border-radius: 12px; padding: 15px; margin-bottom: 20px; font-weight: 600; text-align: center; display: none; }
 
+        /* Блок рейтинга в кабинете мастера */
+        .master-rating-widget { background-color: var(--bg-card); border-radius: 16px; padding: 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255,255,255,0.05); }
+        .rating-stars-big { font-size: 24px; color: var(--accent); letter-spacing: 2px; }
+        .rating-info { display: flex; flex-direction: column; }
+        .rating-score { font-size: 22px; font-weight: 800; color: var(--text-main); line-height: 1; }
+        .rating-count { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
         .master-tabs { display: flex; background-color: var(--bg-card); border-radius: 12px; padding: 4px; margin-bottom: 20px; }
         .master-tab { flex: 1; text-align: center; padding: 10px; border-radius: 10px; font-size: 14px; cursor: pointer; color: var(--text-muted); font-weight: 600; }
         .master-tab.active { background-color: var(--bg-input); color: white; }
@@ -127,7 +135,6 @@
 
         .btn-complete { background-color: rgba(255, 59, 48, 0.15); color: var(--danger); border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 600; cursor: pointer; margin-top: 10px; }
         
-        /* Кнопки клиента */
         .btn-edit-price { background-color: var(--bg-input); color: white; border: none; padding: 12px; border-radius: 12px; flex: 1; font-weight: 600; font-size: 14px; cursor: pointer; }
         .btn-delete-order { background-color: rgba(255, 59, 48, 0.1); color: var(--danger); border: 1px solid var(--danger); padding: 12px; border-radius: 12px; flex: 1; font-weight: 600; font-size: 14px; cursor: pointer; }
         
@@ -177,16 +184,24 @@
         .finance-card { background-color: var(--bg-card); border-radius: 16px; padding: 20px; margin-bottom: 15px; text-align: center; }
         .finance-total { font-size: 32px; font-weight: 800; color: var(--accent); margin-bottom: 5px; }
         .finance-desc { color: var(--text-muted); font-size: 14px; }
+        .switch-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; background-color: var(--bg-card); padding: 16px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.05); }
+        .switch-label { font-size: 15px; font-weight: 500; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #555; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(22px); }
     </style>
 </head>
 <body>
 
-    <!-- БОКОВОЕ МЕНЮ -->
     <div class="menu-overlay" id="menu-overlay" onclick="toggleMenu()"></div>
     <div id="side-menu">
         <div class="profile-info">
             <div class="profile-name" id="menu-user-name">Гость</div>
             <div class="profile-role" id="menu-user-role">Роль: Клиент</div>
+            <div class="profile-rating" id="menu-master-rating" style="display: none;">⭐ <span id="menu-rating-val">5.0</span> <span style="color:var(--text-muted); font-size:12px; font-weight:normal;">(<span id="menu-rating-count">0</span>)</span></div>
         </div>
         
         <button class="menu-item" id="menu-btn-history" onclick="switchTab('client-history')" style="display: none;">🕒 История заказов</button>
@@ -264,7 +279,7 @@
         <div id="client-orders-list" style="margin-top: 20px;"></div>
     </div>
 
-    <!-- ИСТОРИЯ ЗАКАЗОВ (ЗАВЕРШЕННЫЕ) -->
+    <!-- ИСТОРИЯ ЗАКАЗОВ -->
     <div id="view-client-history" class="container">
         <h1>История заказов</h1>
         <div id="client-history-list" style="margin-top: 20px;"></div>
@@ -334,12 +349,21 @@
     <div id="view-master" class="container">
         <h1>Кабинет мастера</h1>
         
+        <!-- ВИДЖЕТ РЕЙТИНГА -->
+        <div class="master-rating-widget">
+            <div class="rating-stars-big">★</div>
+            <div class="rating-info">
+                <div class="rating-score" id="master-rating-score">5.0</div>
+                <div class="rating-count" id="master-rating-count">Нет оценок</div>
+            </div>
+        </div>
+
         <div id="ban-alert" class="ban-alert">
             ⛔ Вы временно заблокированы за низкий рейтинг.<br>
             <span style="font-size: 12px; font-weight: normal; margin-top: 5px; display: block;">Заказы вернутся через: <span id="ban-timer">...</span></span>
         </div>
 
-        <button id="status-btn" class="toggle-btn" style="margin-top: 20px;" onclick="toggleOnlineStatus()">🔴 Начать смену</button>
+        <button id="status-btn" class="toggle-btn" onclick="toggleOnlineStatus()">🔴 Начать смену</button>
         
         <div class="master-tabs">
             <div class="master-tab active" id="tab-new" onclick="switchMasterTab('new')">Новые заказы</div>
@@ -394,7 +418,7 @@
                 <div class="tag" onclick="this.classList.toggle('selected')">Аккуратный</div>
             </div>
             <button class="btn-submit" onclick="submitRating()">Отправить оценку</button>
-            <button class="back-btn" style="margin-top: 10px; color: #888;" onclick="closeRatingModal()">Пропустить</button>
+            <button class="back-btn" style="margin-top: 10px; color: #888; display:block; margin-left:auto; margin-right:auto;" onclick="closeRatingModal()">Пропустить</button>
         </div>
     </div>
 
@@ -404,7 +428,7 @@
             <div class="modal-title">Изменить цену</div>
             <input type="number" id="new-price-input" class="modal-input" placeholder="Новая цена в ₸">
             <button class="btn-submit" onclick="saveNewPrice()">Сохранить</button>
-            <button class="back-btn" style="margin-top: 10px; color: #888;" onclick="closePriceModal()">Отмена</button>
+            <button class="back-btn" style="margin-top: 10px; color: #888; display:block; margin-left:auto; margin-right:auto;" onclick="closePriceModal()">Отмена</button>
         </div>
     </div>
 
@@ -438,22 +462,18 @@
         let map = null;
         let uploadedPhotoBase64 = null;
         
-        // Профили
         let masterName = localStorage.getItem('sheber_master_name_' + MY_USER_ID) || 'Махсат';
         let masterPhone = localStorage.getItem('sheber_master_phone_' + MY_USER_ID) || '';
         let clientPhone = localStorage.getItem('sheber_client_phone_' + MY_USER_ID) || '';
 
-        // БД Мастеров для рейтинга
         let masterDB = JSON.parse(localStorage.getItem('sheber_master_db')) || {};
         
-        // Для модалок
         let currentRatingOrderId = null;
         let currentRatingValue = 0;
         let currentEditingPriceOrderId = null;
 
         const API_KEY_2GIS = "e15b258a-b886-448f-bae9-a067f639ec33";
 
-        // --- ИНИЦИАЛИЗАЦИЯ И МЕНЮ ---
         function initApp() {
             if (!currentUserRole) {
                 switchTab('register');
@@ -461,7 +481,7 @@
                 document.getElementById('main-header').style.display = 'flex';
                 document.getElementById('main-nav').style.display = 'flex';
                 setupRoleUI(currentUserRole);
-                checkBanStatus(); // Проверяем бан при запуске
+                updateMasterRatingUI(); // Обновляем рейтинг при старте
             }
         }
 
@@ -470,16 +490,35 @@
             document.getElementById('nav-master-block').style.display = 'none';
             document.getElementById('menu-btn-history').style.display = 'none';
             document.getElementById('menu-btn-finance').style.display = 'none';
+            document.getElementById('menu-master-rating').style.display = 'none';
 
             if (role === 'master') {
                 document.getElementById('nav-master-block').style.display = 'flex';
                 document.getElementById('menu-btn-finance').style.display = 'flex';
+                document.getElementById('menu-master-rating').style.display = 'flex';
                 switchTab('master');
             } else {
                 document.getElementById('nav-client-block').style.display = 'flex';
                 document.getElementById('menu-btn-history').style.display = 'flex';
                 switchTab('client-home');
             }
+            updateMasterRatingUI();
+        }
+
+        // --- ОБНОВЛЕНИЕ РЕЙТИНГА ---
+        function updateMasterRatingUI() {
+            let myStats = masterDB[MY_USER_ID] || { total: 0, count: 0 };
+            let avg = myStats.count > 0 ? (myStats.total / myStats.count).toFixed(1) : "5.0";
+            let countText = myStats.count > 0 ? `(${myStats.count} оценок)` : "Нет оценок";
+            let countMenuText = myStats.count > 0 ? myStats.count : "0";
+
+            // В кабинете
+            document.getElementById('master-rating-score').innerText = avg;
+            document.getElementById('master-rating-count').innerText = countText;
+
+            // В меню
+            document.getElementById('menu-rating-val').innerText = avg;
+            document.getElementById('menu-rating-count').innerText = countMenuText;
         }
 
         function toggleMenu() {
@@ -491,6 +530,7 @@
                 menu.classList.add('open'); overlay.classList.add('open');
                 document.getElementById('menu-user-name').innerText = currentUserRole === 'master' ? masterName : 'Клиент';
                 document.getElementById('menu-user-role').innerText = currentUserRole === 'master' ? 'Роль: Мастер' : 'Роль: Клиент';
+                updateMasterRatingUI(); // Обновляем при открытии меню
             }
         }
 
@@ -506,7 +546,6 @@
             }
         }
 
-        // --- МАСКА ТЕЛЕФОНА ---
         function applyPhoneMask(inputElement) {
             inputElement.addEventListener('focus', () => { if (inputElement.value === '') inputElement.value = '+7 '; });
             inputElement.addEventListener('input', function (e) {
@@ -524,7 +563,6 @@
         applyPhoneMask(document.getElementById('reg-master-phone'));
         applyPhoneMask(document.getElementById('reg-client-phone'));
 
-        // --- РЕГИСТРАЦИЯ ---
         function selectRole(role) {
             document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('selected'));
             event.currentTarget.classList.add('selected');
@@ -571,7 +609,6 @@
             setupRoleUI(role);
         }
 
-        // --- НАВИГАЦИЯ ---
         function switchTab(tab) {
             tg.HapticFeedback.impactOccurred('light');
             window.scrollTo(0, 0); 
@@ -593,10 +630,12 @@
             } else if (tab === 'client-history') {
                 document.getElementById('view-client-history').classList.add('active');
                 renderClientHistory();
-                toggleMenu(); // Закрываем меню
+                toggleMenu();
             } else if (tab === 'master') {
                 document.getElementById('view-master').classList.add('active');
                 document.getElementById('nav-master').classList.add('active');
+                checkBanStatus();
+                updateMasterRatingUI();
                 renderMasterOrders();
             } else if (tab === 'master-finance') {
                 document.getElementById('view-master-finance').classList.add('active');
@@ -623,26 +662,24 @@
             renderMasterOrders();
         }
 
-        // --- ЛОГИКА БАНОВ ---
         function checkBanStatus() {
             if (currentUserRole !== 'master') return;
             let myStats = masterDB[MY_USER_ID] || { total: 0, count: 0, blockedUntil: 0 };
             
             if (myStats.blockedUntil && Date.now() < myStats.blockedUntil) {
-                // Забанен
                 const daysLeft = Math.ceil((myStats.blockedUntil - Date.now()) / (1000 * 60 * 60 * 24));
                 document.getElementById('ban-alert').style.display = 'block';
                 document.getElementById('ban-timer').innerText = daysLeft + " дн.";
                 document.getElementById('status-btn').disabled = true;
                 document.getElementById('status-btn').style.opacity = '0.5';
             } else {
-                // Разбанен (сбрасываем бан, даем шанс)
                 if (myStats.blockedUntil && Date.now() >= myStats.blockedUntil) {
                     myStats.blockedUntil = 0;
-                    myStats.total = 3; // Сброс рейтинга на нейтральный 3.0
+                    myStats.total = 3; 
                     myStats.count = 1;
                     masterDB[MY_USER_ID] = myStats;
                     localStorage.setItem('sheber_master_db', JSON.stringify(masterDB));
+                    updateMasterRatingUI();
                 }
                 document.getElementById('ban-alert').style.display = 'none';
                 document.getElementById('status-btn').disabled = false;
@@ -650,8 +687,32 @@
             }
         }
 
-        // --- ФОТО И КАРТА ---
-        function handlePhotoUpload(event) { /* ... (как было) ... */ }
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 800;
+                        const scale = MAX_WIDTH / img.width;
+                        canvas.width = MAX_WIDTH;
+                        canvas.height = img.height * scale;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        uploadedPhotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                        const preview = document.getElementById('photo-preview');
+                        preview.src = uploadedPhotoBase64;
+                        preview.style.display = 'block';
+                        document.querySelector('.btn-upload').innerText = "✅ Фото прикреплено";
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
         function openMap() {
             tg.HapticFeedback.impactOccurred('light');
             document.getElementById('map-modal').style.display = 'flex';
@@ -694,10 +755,9 @@
             closeMap();
         }
 
-        // --- ЗАКАЗЫ КЛИЕНТА ---
         function openOrderForm(category) {
             if (!clientPhone) {
-                tg.showAlert("Пожалуйста, сначала укажите ваш номер телефона в профиле (Сменить роль -> Я Клиент).");
+                tg.showAlert("Сначала укажите номер телефона в профиле!");
                 return;
             }
             tg.HapticFeedback.impactOccurred('medium');
@@ -760,7 +820,6 @@
 
         function renderClientOrders() {
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
-            // Показываем только активные заказы
             const myOrders = savedOrders.filter(o => o.clientId === MY_USER_ID && o.status !== 'completed');
             const list = document.getElementById('client-orders-list');
 
@@ -775,7 +834,6 @@
 
                 if (order.status === 'searching') {
                     statusHtml = `<p style="color: var(--accent); font-weight: 600; margin-top: 12px;">⏳ Ищем мастера...</p>`;
-                    // Кнопки редактирования и удаления
                     actionHtml = `
                         <div class="action-buttons" style="margin-top: 15px;">
                             <button class="btn-edit-price" onclick="openEditPrice('${order.id}')">✏️ Изменить цену</button>
@@ -786,12 +844,16 @@
                     let cleanMasterPhone = order.masterPhone.replace(/\D/g,'');
                     let waText = `Здравствуйте, ${order.masterName}! Я по поводу заказа на Sheber (${order.category}).`;
                     let waLink = `https://wa.me/${cleanMasterPhone}?text=${encodeURIComponent(waText)}`;
+                    
+                    // Достаем рейтинг мастера
+                    let mStats = masterDB[order.masterId] || { total: 0, count: 0 };
+                    let mAvg = mStats.count > 0 ? (mStats.total / mStats.count).toFixed(1) : "5.0";
 
                     statusHtml = `
                         <div class="status-box">
                             <div class="status-title">✅ Мастер едет к вам!</div>
                             <div class="status-desc" style="margin-bottom: 10px;">
-                                <b>Мастер:</b> ${order.masterName}<br>
+                                <b>Мастер:</b> ${order.masterName} <span style="color:var(--accent);">⭐ ${mAvg}</span><br>
                                 <b>Телефон:</b> ${order.masterPhone}
                             </div>
                             <div class="action-buttons" style="margin-top: 5px;">
@@ -814,11 +876,9 @@
             }).join('');
         }
 
-        // Редактирование и удаление
         function openEditPrice(orderId) {
             currentEditingPriceOrderId = orderId;
             document.getElementById('price-modal').style.display = 'flex';
-            // Находим текущую цену
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
             const order = savedOrders.find(o => o.id === orderId);
             if(order) document.getElementById('new-price-input').value = order.price;
@@ -846,7 +906,6 @@
             tg.showAlert("Заказ отменен.");
         }
 
-        // История
         function renderClientHistory() {
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
             const myHistory = savedOrders.filter(o => o.clientId === MY_USER_ID && o.status === 'completed');
@@ -873,7 +932,6 @@
             }).join('');
         }
 
-        // --- ОЦЕНКА ---
         function openRatingModal(orderId) {
             currentRatingOrderId = orderId;
             currentRatingValue = 0;
@@ -897,23 +955,19 @@
             const order = savedOrders.find(o => o.id === currentRatingOrderId);
             if (!order) return;
 
-            // Обновляем оценку в БД Мастеров
             let masterStats = masterDB[order.masterId] || { total: 0, count: 0, blockedUntil: 0 };
             masterStats.total += currentRatingValue;
             masterStats.count += 1;
             
-            // Вычисляем средний рейтинг
             let avgRating = masterStats.total / masterStats.count;
             
-            // Если рейтинг упал ниже 3.5 и было достаточно заказов (например, минимум 2), даем бан
             if (avgRating < 3.5 && masterStats.count >= 2) {
-                masterStats.blockedUntil = Date.now() + 10 * 24 * 60 * 60 * 1000; // 10 дней
+                masterStats.blockedUntil = Date.now() + 10 * 24 * 60 * 60 * 1000;
             }
             
             masterDB[order.masterId] = masterStats;
             localStorage.setItem('sheber_master_db', JSON.stringify(masterDB));
 
-            // Отмечаем заказ, что он оценен
             savedOrders = savedOrders.map(o => o.id === currentRatingOrderId ? {...o, ratedByClient: true} : o);
             localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders));
             
@@ -923,9 +977,8 @@
             renderClientHistory();
         }
 
-        // --- МАСТЕР ---
         function renderMasterOrders() {
-            checkBanStatus(); // Проверяем бан
+            checkBanStatus();
 
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
             const availableForMe = TEST_MODE ? savedOrders : savedOrders.filter(o => o.clientId !== MY_USER_ID);
@@ -936,7 +989,6 @@
             const newOrders = availableForMe.filter(o => o.status === 'searching');
             const activeOrders = availableForMe.filter(o => o.status === 'accepted' && o.masterId === MY_USER_ID);
 
-            // Если бан - заказы не показываем
             let myStats = masterDB[MY_USER_ID];
             if (myStats && myStats.blockedUntil > Date.now()) {
                 newList.innerHTML = `<div class="empty-state">Вы заблокированы. Заказы недоступны.</div>`;
@@ -994,8 +1046,6 @@
             }
 
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
-            
-            // Проверка на 1 заказ
             const myActiveOrders = savedOrders.filter(o => o.status === 'accepted' && o.masterId === MY_USER_ID);
             if (myActiveOrders.length > 0) {
                 tg.showAlert("Вы уже взяли заказ в работу. Сначала завершите текущий!");
@@ -1010,7 +1060,6 @@
 
         function completeOrder(orderId) {
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
-            // Вместо удаления - ставим статус completed
             savedOrders = savedOrders.map(o => o.id === orderId ? {...o, status: 'completed', completedAt: Date.now()} : o);
             localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders));
             tg.showAlert("✅ Заказ завершен! Клиент может оставить отзыв.");
