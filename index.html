@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sheber Mini App</title>
-    <!-- Подключаем SDK Telegram -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -34,13 +33,6 @@
             padding: 20px;
         }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
         h1 {
             font-size: 24px;
             margin: 0 0 5px 0;
@@ -50,7 +42,7 @@
         .subtitle {
             color: var(--text-muted);
             font-size: 14px;
-            margin: 0;
+            margin: 0 0 20px 0;
         }
 
         .search-bar {
@@ -71,10 +63,6 @@
             outline: none;
         }
 
-        .search-bar input::placeholder {
-            color: var(--text-muted);
-        }
-
         .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -86,12 +74,11 @@
             border-radius: 16px;
             padding: 16px;
             cursor: pointer;
-            transition: transform 0.1s, background-color 0.2s;
+            transition: transform 0.1s;
         }
 
         .card:active {
             transform: scale(0.96);
-            background-color: #333;
         }
 
         .icon-circle {
@@ -116,10 +103,8 @@
             margin: 0;
             font-size: 12px;
             color: var(--text-muted);
-            line-height: 1.3;
         }
 
-        /* Нижняя навигация */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -130,6 +115,7 @@
             display: flex;
             justify-content: space-around;
             padding: 10px 0 20px 0;
+            z-index: 100;
         }
 
         .nav-item {
@@ -161,17 +147,100 @@
             color: #000;
         }
 
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            background-color: var(--card-bg);
+            border: 1px solid #444;
+            color: white;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--accent);
+        }
+
+        textarea.form-input {
+            resize: none;
+            height: 100px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            background-color: var(--accent);
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-submit:active {
+            background-color: var(--accent-dark);
+        }
+
+        .toggle-btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            background-color: var(--card-bg);
+            color: white;
+            font-size: 16px;
+            border: 1px solid #444;
+            margin-bottom: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .toggle-btn.online {
+            background-color: #22c55e;
+            border-color: #22c55e;
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            margin-top: 40px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 0;
+            margin-bottom: 15px;
+        }
+
         .whatsapp-btn {
             position: fixed;
-            bottom: 80px;
+            bottom: 90px;
             right: 20px;
             background-color: #25D366;
             color: white;
             border: none;
-            width: 56px;
-            height: 56px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            font-size: 28px;
+            font-size: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -183,13 +252,9 @@
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <div>
-                <h1>Что починить?</h1>
-                <p class="subtitle">Выберите категорию — мастера увидят ваш заказ</p>
-            </div>
-        </header>
+    <div id="view-client" class="container">
+        <h1>Что починить?</h1>
+        <p class="subtitle">Выберите категорию — мастера увидят ваш заказ</p>
 
         <div class="search-bar">
             <span style="margin-right: 10px; color: var(--text-muted);">🔍</span>
@@ -197,37 +262,32 @@
         </div>
 
         <div class="grid">
-            <div class="card" onclick="createOrder('Сантехник')">
+            <div class="card" onclick="openOrderForm('Сантехник')">
                 <div class="icon-circle">🔧</div>
                 <h3>Сантехник</h3>
                 <p>Краны, трубы, засоры</p>
             </div>
-            
-            <div class="card" onclick="createOrder('Электрик')">
+            <div class="card" onclick="openOrderForm('Электрик')">
                 <div class="icon-circle">💡</div>
                 <h3>Электрик</h3>
                 <p>Проводка, свет, розетки</p>
             </div>
-            
-            <div class="card" onclick="createOrder('Мастер на час')">
+            <div class="card" onclick="openOrderForm('Мастер на час')">
                 <div class="icon-circle">🛠️</div>
                 <h3>Мастер на час</h3>
                 <p>Мелкий ремонт</p>
             </div>
-            
-            <div class="card" onclick="createOrder('Авто')">
+            <div class="card" onclick="openOrderForm('Авто')">
                 <div class="icon-circle">🚗</div>
                 <h3>Авто</h3>
                 <p>Автоэлектрик, помощь</p>
             </div>
-            
-            <div class="card" onclick="createOrder('Замки')">
+            <div class="card" onclick="openOrderForm('Замки')">
                 <div class="icon-circle">🔑</div>
                 <h3>Замки</h3>
                 <p>Вскрытие, замена</p>
             </div>
-            
-            <div class="card" onclick="createOrder('Техника')">
+            <div class="card" onclick="openOrderForm('Техника')">
                 <div class="icon-circle">📺</div>
                 <h3>Техника</h3>
                 <p>Стиралки, холодильники</p>
@@ -235,66 +295,144 @@
         </div>
     </div>
 
-    <!-- Кнопка WhatsApp -->
+    <div id="view-order-form" class="container" style="display: none;">
+        <button class="back-btn" onclick="switchTab('client')">← Назад</button>
+        <h1 id="form-title">Заказ: Сантехник</h1>
+        <p class="subtitle">Заполните детали, чтобы мастера откликнулись</p>
+
+        <div class="form-group">
+            <label>Адрес (Город, улица, дом, кв)</label>
+            <input type="text" id="input-address" class="form-input" placeholder="Например: Алматы, Абая 15">
+        </div>
+
+        <div class="form-group">
+            <label>Опишите проблему</label>
+            <textarea id="input-desc" class="form-input" placeholder="Течет кран на кухне..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Предлагаемая цена (₸)</label>
+            <input type="number" id="input-price" class="form-input" placeholder="Например: 5000">
+        </div>
+
+        <button class="btn-submit" onclick="submitOrder()">Опубликовать заказ</button>
+    </div>
+
+    <div id="view-master" class="container" style="display: none;">
+        <h1>Кабинет мастера</h1>
+        <p class="subtitle">Управляйте статусом и принимайте заказы</p>
+
+        <button id="status-btn" class="toggle-btn" onclick="toggleOnlineStatus()">
+            🔴 Я офлайн (Нажмите, чтобы выйти на смену)
+        </button>
+
+        <div class="empty-state">
+            <h3>Пока нет новых заказов</h3>
+            <p>Как только клиент создаст заказ, он появится здесь.</p>
+        </div>
+    </div>
+
     <button class="whatsapp-btn" onclick="contactWhatsApp()">💬</button>
 
-    <!-- Нижнее меню -->
     <div class="bottom-nav">
-        <div class="nav-item active">
+        <div id="nav-client" class="nav-item active" onclick="switchTab('client')">
             <div class="nav-icon">🔍</div>
             <span>Ищу</span>
         </div>
-        <div class="nav-item">
+        <div id="nav-master" class="nav-item" onclick="switchTab('master')">
             <div class="nav-icon">🔧</div>
             <span>Мастер</span>
         </div>
-        <div class="nav-item">
+        <div class="nav-item" onclick="tg.showAlert('Служба поддержки: @sheber_support')">
             <div class="nav-icon">❓</div>
             <span>Поддержка</span>
         </div>
     </div>
 
     <script>
-        // Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Разворачиваем приложение на весь экран
+        tg.expand();
+        const user = tg.initDataUnsafe?.user || { id: 'test', first_name: 'Клиент' };
+        
+        let currentCategory = "";
+        let isMasterOnline = false;
 
-        // Получаем данные пользователя из Telegram
-        const user = tg.initDataUnsafe?.user || { id: 'test_user', first_name: 'Гость' };
-        console.log("Пользователь Telegram:", user);
-
-        // Функция создания заказа
-        function createOrder(category) {
-            // Визуальный отклик
-            tg.HapticFeedback.impactOccurred('medium');
+        function switchTab(tab) {
+            tg.HapticFeedback.impactOccurred('light');
             
-            // Формируем данные
-            const orderData = {
-                user_id: user.id,
-                name: user.first_name,
-                category: category,
-                status: "searching",
-                timestamp: new Date().toISOString()
-            };
+            document.getElementById('view-client').style.display = 'none';
+            document.getElementById('view-order-form').style.display = 'none';
+            document.getElementById('view-master').style.display = 'none';
 
-            // Здесь в будущем будет запрос к вашему серверу (API)
-            // fetch('https://ваш-сервер.com/api/order', { method: 'POST', body: JSON.stringify(orderData) })
-            
-            console.log("Отправка заказа на сервер:", orderData);
+            document.getElementById('nav-client').classList.remove('active');
+            document.getElementById('nav-master').classList.remove('active');
 
-            // Показываем нативное уведомление Telegram
-            tg.showAlert(`✅ Заказ на "${category}" создан!\nИщем свободного мастера...`);
-            
-            // Если хотите закрыть приложение после заказа, раскомментируйте:
-            // setTimeout(() => tg.close(), 2000);
+            if (tab === 'client') {
+                document.getElementById('view-client').style.display = 'block';
+                document.getElementById('nav-client').classList.add('active');
+            } else if (tab === 'master') {
+                document.getElementById('view-master').style.display = 'block';
+                document.getElementById('nav-master').classList.add('active');
+            }
         }
 
-        // Функция связи в WhatsApp
-        function contactWhatsApp() {
-            const phone = "77011234567"; // ЗАМЕНИТЕ НА ВАШ НОМЕР
-            const text = encodeURIComponent("Здравствуйте! Нужна помощь мастера через Sheber.");
+        function openOrderForm(category) {
+            tg.HapticFeedback.impactOccurred('medium');
+            currentCategory = category;
             
-            // Открываем ссылку внутри Telegram
+            document.getElementById('view-client').style.display = 'none';
+            document.getElementById('view-master').style.display = 'none';
+            document.getElementById('view-order-form').style.display = 'block';
+            
+            document.getElementById('form-title').innerText = "Заказ: " + category;
+        }
+
+        function submitOrder() {
+            const address = document.getElementById('input-address').value;
+            const desc = document.getElementById('input-desc').value;
+            const price = document.getElementById('input-price').value;
+
+            if (!address) {
+                tg.showAlert("Пожалуйста, введите адрес!");
+                return;
+            }
+
+            const orderData = {
+                user_id: user.id,
+                category: currentCategory,
+                address: address,
+                description: desc,
+                price: price,
+                status: "searching"
+            };
+            console.log("Заказ отправлен:", orderData);
+
+            tg.showAlert(`✅ Заказ на "${currentCategory}" опубликован!\nМастера рядом получили уведомление.`);
+            
+            document.getElementById('input-address').value = '';
+            document.getElementById('input-desc').value = '';
+            document.getElementById('input-price').value = '';
+            switchTab('client');
+        }
+
+        function toggleOnlineStatus() {
+            const btn = document.getElementById('status-btn');
+            isMasterOnline = !isMasterOnline;
+
+            if (isMasterOnline) {
+                tg.HapticFeedback.notificationOccurred('success');
+                btn.classList.add('online');
+                btn.innerText = "🟢 Вы на смене (Ждем заказы...)";
+            } else {
+                tg.HapticFeedback.impactOccurred('light');
+                btn.classList.remove('online');
+                btn.innerText = "🔴 Я офлайн (Нажмите, чтобы выйти на смену)";
+            }
+        }
+
+        function contactWhatsApp() {
+            const phone = "77011234567"; 
+            const text = encodeURIComponent("Здравствуйте! Нужна помощь мастера через Sheber.");
             tg.openLink(`https://wa.me/${phone}?text=${text}`);
         }
     </script>
