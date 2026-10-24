@@ -26,7 +26,7 @@
         .container.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* --- ШАПКА С ГАМБУРГЕРОМ --- */
+        /* Шапка */
         .top-header {
             display: flex; align-items: center; justify-content: space-between;
             padding: 15px 20px; background-color: var(--bg-body);
@@ -35,7 +35,7 @@
         .hamburger-btn { background: none; border: none; color: white; font-size: 26px; cursor: pointer; padding: 0; }
         .header-title { font-size: 18px; font-weight: 700; margin: 0; }
 
-        /* --- БОКОВОЕ МЕНЮ --- */
+        /* Меню */
         #side-menu {
             position: fixed; top: 0; left: -280px; width: 280px; height: 100vh;
             background-color: var(--bg-card); z-index: 1000; transition: left 0.3s ease;
@@ -62,7 +62,7 @@
         h1 { font-size: 26px; margin: 0 0 6px 0; font-weight: 800; letter-spacing: -0.5px; }
         .subtitle { color: var(--text-muted); font-size: 15px; margin: 0 0 24px 0; }
 
-        /* Сетка категорий */
+        /* Сетка */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         .card {
             background-color: var(--bg-card); border-radius: 18px; padding: 18px;
@@ -157,7 +157,6 @@
         .status-box { background-color: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3); border-radius: 12px; padding: 16px; margin-top: 12px; }
         .status-title { color: var(--success); font-size: 16px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
         
-        /* Переключатель (Заказ для другого) */
         .switch-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; background-color: var(--bg-card); padding: 16px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.05); }
         .switch-label { font-size: 15px; font-weight: 500; }
         .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
@@ -247,7 +246,6 @@
         <button class="back-btn" onclick="switchTab('client-home')">← Назад</button>
         <h1 id="form-title" style="margin-bottom: 24px;">Заказ: Сантехник</h1>
         
-        <!-- Переключатель: Для себя / Для другого -->
         <div class="switch-container">
             <span class="switch-label">Заказ для другого человека?</span>
             <label class="switch">
@@ -306,7 +304,9 @@
     <!-- КАБИНЕТ МАСТЕРА -->
     <div id="view-master" class="container">
         <h1>Кабинет мастера</h1>
-        <button id="status-btn" class="toggle-btn" style="margin-top: 20px;" onclick="toggleOnlineStatus()">🔴 Я офлайн (Нажмите, чтобы выйти)</button>
+        
+        <!-- ИЗМЕНЕННЫЙ ТЕКСТ КНОПКИ -->
+        <button id="status-btn" class="toggle-btn" style="margin-top: 20px;" onclick="toggleOnlineStatus()">🔴 Начать смену</button>
         
         <div class="master-tabs">
             <div class="master-tab active" id="tab-new" onclick="switchMasterTab('new')">Новые заказы</div>
@@ -352,11 +352,9 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         
-        // ВКЛЮЧЕНО ДЛЯ ТЕСТА (на 2 аккаунтах будет работать)
         const TEST_MODE = true; 
-        
         const MY_USER_ID = tg.initDataUnsafe?.user?.id || 'test_' + Math.floor(Math.random() * 1000);
-        const MY_TG_PHONE = "+7 (777) 000-00-00"; // Заглушка, так как Telegram не отдает номер без запроса
+        const MY_TG_PHONE = "+7 (777) 000-00-00"; // Заглушка, если клиент не ввел свой номер
 
         let currentUserRole = localStorage.getItem('sheber_role_' + MY_USER_ID) || null; 
         let currentCategory = "";
@@ -365,23 +363,19 @@
         let map = null;
         let uploadedPhotoBase64 = null;
         
-        // Данные мастера
         let masterName = localStorage.getItem('sheber_master_name_' + MY_USER_ID) || 'Махсат';
         let masterPhone = localStorage.getItem('sheber_master_phone_' + MY_USER_ID) || '';
 
         const API_KEY_2GIS = "e15b258a-b886-448f-bae9-a067f639ec33";
 
-        // --- УПРАВЛЕНИЕ МЕНЮ ---
+        // --- МЕНЮ ---
         function toggleMenu() {
             const menu = document.getElementById('side-menu');
             const overlay = document.getElementById('menu-overlay');
-            
             if (menu.classList.contains('open')) {
-                menu.classList.remove('open');
-                overlay.classList.remove('open');
+                menu.classList.remove('open'); overlay.classList.remove('open');
             } else {
-                menu.classList.add('open');
-                overlay.classList.add('open');
+                menu.classList.add('open'); overlay.classList.add('open');
                 document.getElementById('menu-user-name').innerText = currentUserRole === 'master' ? masterName : 'Клиент';
                 document.getElementById('menu-user-role').innerText = currentUserRole === 'master' ? 'Роль: Мастер' : 'Роль: Клиент';
             }
@@ -417,16 +411,11 @@
         applyPhoneMask(document.getElementById('input-phone'));
         applyPhoneMask(document.getElementById('reg-master-phone'));
 
-        // --- ПЕРЕКЛЮЧАТЕЛЬ ТЕЛЕФОНА В ФОРМЕ ---
+        // --- ПЕРЕКЛЮЧАТЕЛЬ ТЕЛЕФОНА ---
         function togglePhoneInput() {
             const isChecked = document.getElementById('order-for-other').checked;
-            const phoneGroup = document.getElementById('phone-group');
-            if (isChecked) {
-                phoneGroup.style.display = 'block';
-            } else {
-                phoneGroup.style.display = 'none';
-                document.getElementById('input-phone').value = ''; // Очищаем, будем брать системный
-            }
+            document.getElementById('phone-group').style.display = isChecked ? 'block' : 'none';
+            if (!isChecked) document.getElementById('input-phone').value = '';
         }
 
         // --- РЕГИСТРАЦИЯ ---
@@ -481,7 +470,7 @@
                 const inputPhone = document.getElementById('reg-master-phone').value.trim();
                 
                 masterName = inputName ? inputName : 'Махсат';
-                masterPhone = inputPhone; // Номер жестко привязан
+                masterPhone = inputPhone;
                 
                 localStorage.setItem('sheber_master_name_' + MY_USER_ID, masterName);
                 localStorage.setItem('sheber_master_phone_' + MY_USER_ID, masterPhone);
@@ -552,9 +541,7 @@
                         canvas.height = img.height * scale;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        
                         uploadedPhotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                        
                         const preview = document.getElementById('photo-preview');
                         preview.src = uploadedPhotoBase64;
                         preview.style.display = 'block';
@@ -609,17 +596,14 @@
             closeMap();
         }
 
-        // --- ЛОГИКА ЗАКАЗОВ ---
+        // --- ЗАКАЗЫ ---
         function openOrderForm(category) {
             tg.HapticFeedback.impactOccurred('medium');
             currentCategory = category;
             switchTab('order-form');
             document.getElementById('form-title').innerText = "Заказ: " + category;
-            
-            // Сбрасываем переключатель
             document.getElementById('order-for-other').checked = false;
             togglePhoneInput();
-
             document.getElementById('input-address').value = '';
             document.getElementById('input-entrance').value = '';
             document.getElementById('input-apt').value = '';
@@ -636,6 +620,7 @@
             let phone = "";
             const isForOther = document.getElementById('order-for-other').checked;
 
+            // ИСПРАВЛЕНИЕ БАГА С НОМЕРОМ: если для себя, ставим заглушку или TG номер
             if (isForOther) {
                 phone = document.getElementById('input-phone').value;
                 if (phone.length < 5) {
@@ -643,8 +628,7 @@
                     return;
                 }
             } else {
-                phone = "Номер из Telegram"; // Заглушка
-                // В реальном приложении здесь будет номер из Telegram
+                phone = MY_TG_PHONE; // Телефон клиента (по умолчанию)
             }
 
             const city = document.getElementById('input-city').value;
@@ -734,12 +718,17 @@
 
         function renderMasterOrders() {
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
-            
-            // Фильтрация: не показываем мастеру его же заказы (если он их создавал как клиент)
             const availableForMe = TEST_MODE ? savedOrders : savedOrders.filter(o => o.clientId !== MY_USER_ID);
 
             const newList = document.getElementById('new-orders-list');
             const activeList = document.getElementById('active-orders-list');
+
+            // ЕСЛИ МАСТЕР ОФЛАЙН, СПИСОК ПУСТ
+            if (!isMasterOnline) {
+                newList.innerHTML = `<div class="empty-state">Вы офлайн. Нажмите "Начать смену", чтобы получать заказы.</div>`;
+                activeList.innerHTML = `<div class="empty-state">Вы офлайн.</div>`;
+                return;
+            }
 
             const newOrders = availableForMe.filter(o => o.status === 'searching');
             const activeOrders = availableForMe.filter(o => o.status === 'accepted' && o.masterId === MY_USER_ID);
@@ -773,6 +762,7 @@
                         <h3>${order.category} <span style="float:right; color:var(--accent)">${order.price} ₸</span></h3>
                         ${order.photo ? `<img src="${order.photo}" class="order-photo">` : ''}
                         <p>📍 ${order.address}</p>
+                        <p>📞 ${order.phone}</p> <!-- ВОТ ОН, НОМЕР КЛИЕНТА -->
                         
                         <div class="action-buttons" style="margin-top: 15px;">
                             <a href="tel:+${cleanPhone}" class="btn-contact btn-call">📞 Позвонить</a>
@@ -792,10 +782,8 @@
 
         function acceptOrder(orderId) {
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
-
             savedOrders = savedOrders.map(o => o.id === orderId ? {...o, status: 'accepted', masterId: MY_USER_ID, masterName: masterName, masterPhone: masterPhone} : o);
             localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders));
-            
             tg.HapticFeedback.notificationOccurred('success');
             switchMasterTab('progress');
         }
@@ -817,7 +805,8 @@
                 renderMasterOrders();
             } else {
                 btn.classList.remove('online');
-                btn.innerText = "🔴 Я офлайн (Нажмите, чтобы выйти)";
+                btn.innerText = "🔴 Начать смену";
+                renderMasterOrders();
             }
         }
 
