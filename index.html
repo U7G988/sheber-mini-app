@@ -15,238 +15,116 @@
             --accent-dark: #eab308;
         }
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            margin: 0; padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color); color: var(--text-main);
             padding-bottom: 80px;
         }
 
-        .container {
-            padding: 20px;
-        }
+        .container { padding: 20px; }
 
-        h1 {
-            font-size: 24px;
-            margin: 0 0 5px 0;
-            font-weight: 700;
-        }
-
-        .subtitle {
-            color: var(--text-muted);
-            font-size: 14px;
-            margin: 0 0 20px 0;
-        }
+        h1 { font-size: 24px; margin: 0 0 5px 0; font-weight: 700; }
+        .subtitle { color: var(--text-muted); font-size: 14px; margin: 0 0 20px 0; }
 
         .search-bar {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            margin-bottom: 24px;
+            background-color: var(--card-bg); border-radius: 12px;
+            padding: 12px 16px; display: flex; align-items: center; margin-bottom: 24px;
         }
-
         .search-bar input {
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 15px;
-            width: 100%;
-            outline: none;
+            background: transparent; border: none; color: white;
+            font-size: 15px; width: 100%; outline: none;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .card {
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            padding: 16px;
-            cursor: pointer;
-            transition: transform 0.1s;
+            background-color: var(--card-bg); border-radius: 16px; padding: 16px;
+            cursor: pointer; transition: transform 0.1s;
         }
-
-        .card:active {
-            transform: scale(0.96);
-        }
-
+        .card:active { transform: scale(0.96); }
         .icon-circle {
-            width: 48px;
-            height: 48px;
-            background-color: var(--accent);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin-bottom: 12px;
+            width: 48px; height: 48px; background-color: var(--accent);
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 24px; margin-bottom: 12px;
         }
-
-        .card h3 {
-            margin: 0 0 4px 0;
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        .card p {
-            margin: 0;
-            font-size: 12px;
-            color: var(--text-muted);
-        }
+        .card h3 { margin: 0 0 4px 0; font-size: 15px; font-weight: 600; }
+        .card p { margin: 0; font-size: 12px; color: var(--text-muted); }
 
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: #1a1a1a;
-            border-top: 1px solid #333;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0 20px 0;
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background-color: #1a1a1a; border-top: 1px solid #333;
+            display: flex; justify-content: space-around; padding: 10px 0 20px 0;
             z-index: 100;
         }
-
         .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--text-muted);
-            font-size: 11px;
-            cursor: pointer;
+            display: flex; flex-direction: column; align-items: center;
+            color: var(--text-muted); font-size: 11px; cursor: pointer;
         }
-
-        .nav-item.active {
-            color: var(--accent);
-        }
-
+        .nav-item.active { color: var(--accent); }
         .nav-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            margin-bottom: 4px;
+            width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; margin-bottom: 4px;
         }
+        .nav-item.active .nav-icon { background-color: var(--accent); color: #000; }
 
-        .nav-item.active .nav-icon {
-            background-color: var(--accent);
-            color: #000;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
         .form-input {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            background-color: var(--card-bg);
-            border: 1px solid #444;
-            color: white;
-            font-size: 15px;
-            outline: none;
+            width: 100%; padding: 14px; border-radius: 12px;
+            background-color: var(--card-bg); border: 1px solid #444;
+            color: white; font-size: 15px; outline: none;
         }
-
-        .form-input:focus {
-            border-color: var(--accent);
-        }
-
-        textarea.form-input {
-            resize: none;
-            height: 100px;
-        }
-
+        .form-input:focus { border-color: var(--accent); }
+        textarea.form-input { resize: none; height: 100px; }
         .btn-submit {
-            width: 100%;
-            padding: 16px;
-            border-radius: 12px;
-            background-color: var(--accent);
-            color: #000;
-            font-weight: bold;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            margin-top: 10px;
+            width: 100%; padding: 16px; border-radius: 12px;
+            background-color: var(--accent); color: #000;
+            font-weight: bold; font-size: 16px; border: none;
+            cursor: pointer; margin-top: 10px;
         }
-
-        .btn-submit:active {
-            background-color: var(--accent-dark);
-        }
+        .btn-submit:active { background-color: var(--accent-dark); }
 
         .toggle-btn {
-            width: 100%;
-            padding: 16px;
-            border-radius: 12px;
-            background-color: var(--card-bg);
-            color: white;
-            font-size: 16px;
-            border: 1px solid #444;
-            margin-bottom: 20px;
-            cursor: pointer;
-            font-weight: bold;
+            width: 100%; padding: 16px; border-radius: 12px;
+            background-color: var(--card-bg); color: white;
+            font-size: 16px; border: 1px solid #444; margin-bottom: 20px;
+            cursor: pointer; font-weight: bold;
         }
-
-        .toggle-btn.online {
-            background-color: #22c55e;
-            border-color: #22c55e;
-            color: white;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: var(--text-muted);
-            margin-top: 40px;
-        }
-
+        .toggle-btn.online { background-color: #22c55e; border-color: #22c55e; color: white; }
+        
+        .empty-state { text-align: center; color: var(--text-muted); margin-top: 40px; }
         .back-btn {
-            background: none;
-            border: none;
-            color: var(--accent);
-            font-size: 16px;
-            cursor: pointer;
-            padding: 0;
-            margin-bottom: 15px;
+            background: none; border: none; color: var(--accent);
+            font-size: 16px; cursor: pointer; padding: 0; margin-bottom: 15px;
+        }
+
+        /* Стили для карточки заказа у мастера */
+        .order-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--accent);
+        }
+        .order-card h3 { margin: 0 0 8px 0; font-size: 16px; color: var(--accent); }
+        .order-card p { margin: 4px 0; font-size: 14px; color: #ccc; }
+        .order-price { font-size: 18px; font-weight: bold; color: white; margin: 10px 0 !important; }
+        .btn-accept {
+            background-color: #22c55e; color: white; border: none;
+            padding: 10px; border-radius: 8px; width: 100%;
+            font-weight: bold; cursor: pointer; margin-top: 10px;
         }
 
         .whatsapp-btn {
-            position: fixed;
-            bottom: 90px;
-            right: 20px;
-            background-color: #25D366;
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
-            cursor: pointer;
-            z-index: 100;
+            position: fixed; bottom: 90px; right: 20px;
+            background-color: #25D366; color: white; border: none;
+            width: 50px; height: 50px; border-radius: 50%;
+            font-size: 24px; display: flex; align-items: center;
+            justify-content: center; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+            cursor: pointer; z-index: 100;
         }
     </style>
 </head>
@@ -326,9 +204,12 @@
             🔴 Я офлайн (Нажмите, чтобы выйти на смену)
         </button>
 
-        <div class="empty-state">
-            <h3>Пока нет новых заказов</h3>
-            <p>Как только клиент создаст заказ, он появится здесь.</p>
+        <!-- Сюда будут добавляться заказы -->
+        <div id="master-orders-list">
+            <div class="empty-state">
+                <h3>Пока нет новых заказов</h3>
+                <p>Как только клиент создаст заказ, он появится здесь.</p>
+            </div>
         </div>
     </div>
 
@@ -357,6 +238,7 @@
         let currentCategory = "";
         let isMasterOnline = false;
 
+        // Функция для переключения экранов
         function switchTab(tab) {
             tg.HapticFeedback.impactOccurred('light');
             
@@ -373,6 +255,7 @@
             } else if (tab === 'master') {
                 document.getElementById('view-master').style.display = 'block';
                 document.getElementById('nav-master').classList.add('active');
+                renderMasterOrders(); // Обновляем список при входе
             }
         }
 
@@ -387,32 +270,82 @@
             document.getElementById('form-title').innerText = "Заказ: " + category;
         }
 
+        // СОЗДАНИЕ ЗАКАЗА (Сохранение в память браузера)
         function submitOrder() {
             const address = document.getElementById('input-address').value;
             const desc = document.getElementById('input-desc').value;
             const price = document.getElementById('input-price').value;
 
-            if (!address) {
-                tg.showAlert("Пожалуйста, введите адрес!");
+            if (!address || !price) {
+                tg.showAlert("Пожалуйста, заполните адрес и цену!");
                 return;
             }
 
-            const orderData = {
-                user_id: user.id,
+            const newOrder = {
+                id: Date.now(), // Уникальный ID заказа
                 category: currentCategory,
                 address: address,
-                description: desc,
-                price: price,
-                status: "searching"
+                desc: desc,
+                price: price
             };
-            console.log("Заказ отправлен:", orderData);
+
+            // Берем текущие заказы из памяти (или создаем пустой массив)
+            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders')) || [];
+            savedOrders.push(newOrder); // Добавляем новый
+            localStorage.setItem('sheber_orders', JSON.stringify(savedOrders)); // Сохраняем
 
             tg.showAlert(`✅ Заказ на "${currentCategory}" опубликован!\nМастера рядом получили уведомление.`);
             
+            // Очищаем форму
             document.getElementById('input-address').value = '';
             document.getElementById('input-desc').value = '';
             document.getElementById('input-price').value = '';
+            
             switchTab('client');
+        }
+
+        // ОТОБРАЖЕНИЕ ЗАКАЗОВ У МАСТЕРА
+        function renderMasterOrders() {
+            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders')) || [];
+            const listContainer = document.getElementById('master-orders-list');
+
+            if (savedOrders.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="empty-state">
+                        <h3>Пока нет новых заказов</h3>
+                        <p>Как только клиент создаст заказ, он появится здесь.</p>
+                    </div>`;
+                return;
+            }
+
+            // Генерируем HTML для каждого заказа
+            let html = '';
+            savedOrders.forEach(order => {
+                html += `
+                    <div class="order-card">
+                        <h3>${order.category}</h3>
+                        <p>📍 Адрес: ${order.address}</p>
+                        <p>📝 Описание: ${order.desc || 'Без описания'}</p>
+                        <p class="order-price">💰 ${order.price} ₸</p>
+                        <button class="btn-accept" onclick="acceptOrder(${order.id})">Принять заказ</button>
+                    </div>
+                `;
+            });
+            listContainer.innerHTML = html;
+        }
+
+        // ПРИНЯТИЕ ЗАКАЗА МАСТЕРОМ
+        function acceptOrder(orderId) {
+            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders')) || [];
+            
+            // Удаляем заказ из списка свободных
+            savedOrders = savedOrders.filter(order => order.id !== orderId);
+            localStorage.setItem('sheber_orders', JSON.stringify(savedOrders));
+
+            tg.HapticFeedback.notificationOccurred('success');
+            tg.showAlert("✅ Вы приняли заказ! Свяжитесь с клиентом.");
+            
+            renderMasterOrders(); // Обновляем экран
         }
 
         function toggleOnlineStatus() {
@@ -423,6 +356,7 @@
                 tg.HapticFeedback.notificationOccurred('success');
                 btn.classList.add('online');
                 btn.innerText = "🟢 Вы на смене (Ждем заказы...)";
+                renderMasterOrders();
             } else {
                 tg.HapticFeedback.impactOccurred('light');
                 btn.classList.remove('online');
