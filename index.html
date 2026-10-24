@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sheber Mini App</title>
+    <title>Sheber v2.0</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://mapgl.2gis.com/api/js/v1"></script>
     <style>
@@ -11,7 +11,8 @@
             --bg-body: #0f0f11; --bg-card: #1c1c1e; --bg-input: #2c2c2e;
             --text-main: #ffffff; --text-muted: #8e8e93;
             --accent: #FFCC00; --accent-pressed: #E5B800;
-            --success: #34C759; --danger: #FF3B30;
+            --success: #34C759; --danger: #FF3B30; --chat-bubble: #2c2c2e;
+            --level-bronze: #cd7f32; --level-silver: #c0c0c0; --level-gold: #ffd700;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -47,9 +48,13 @@
         .menu-overlay.open { display: block; }
         
         .profile-info { padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
-        .profile-name { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+        .profile-name { font-size: 18px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
         .profile-role { color: var(--accent); font-size: 14px; font-weight: 600; text-transform: uppercase; }
-        .profile-rating { color: var(--accent); font-size: 14px; font-weight: 600; margin-top: 5px; display: flex; align-items: center; gap: 5px; }
+        .level-badge { font-size: 12px; padding: 2px 8px; border-radius: 10px; font-weight: bold; display: inline-block; margin-top: 5px;}
+        .level-bronze { background: rgba(205, 127, 50, 0.2); color: var(--level-bronze); border: 1px solid var(--level-bronze); }
+        .level-silver { background: rgba(192, 192, 192, 0.2); color: var(--level-silver); border: 1px solid var(--level-silver); }
+        .level-gold { background: rgba(255, 215, 0, 0.2); color: var(--level-gold); border: 1px solid var(--level-gold); }
+        .verified-badge { color: #1e88e5; font-size: 16px; }
         
         .menu-item {
             display: flex; align-items: center; gap: 12px; padding: 16px;
@@ -78,19 +83,14 @@
         .back-btn { background: none; border: none; color: var(--text-muted); font-size: 16px; font-weight: 600; cursor: pointer; padding: 0 0 15px 0; display: flex; align-items: center; gap: 5px; }
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
-        .form-input {
+        .form-input, .form-select {
             width: 100%; padding: 16px; border-radius: 14px;
             background-color: var(--bg-card); border: 1px solid rgba(255,255,255,0.05);
             color: white; font-size: 16px; outline: none; transition: border 0.2s;
         }
-        .form-input:focus { border-color: var(--accent); }
+        .form-input:focus, .form-select:focus { border-color: var(--accent); }
         textarea.form-input { resize: none; height: 90px; }
-        
-        select.form-input {
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat; background-position: right 16px top 50%; background-size: 12px auto;
-        }
+        .form-select { appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 16px top 50%; background-size: 12px auto; }
 
         .address-row { display: flex; gap: 10px; }
         .btn-map { background-color: var(--bg-card); border: 1px solid rgba(255,255,255,0.05); color: white; border-radius: 14px; padding: 0 16px; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; }
@@ -107,19 +107,20 @@
         .toggle-btn.online { background-color: rgba(52, 199, 89, 0.15); border-color: var(--success); color: var(--success); }
         .ban-alert { background-color: rgba(255, 59, 48, 0.15); color: var(--danger); border: 1px solid var(--danger); border-radius: 12px; padding: 15px; margin-bottom: 20px; font-weight: 600; text-align: center; display: none; }
 
-        /* Блок рейтинга в кабинете мастера */
-        .master-rating-widget { background-color: var(--bg-card); border-radius: 16px; padding: 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255,255,255,0.05); }
-        .rating-stars-big { font-size: 24px; color: var(--accent); letter-spacing: 2px; }
-        .rating-info { display: flex; flex-direction: column; }
+        .master-rating-widget { background-color: var(--bg-card); border-radius: 16px; padding: 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; border: 1px solid rgba(255,255,255,0.05); }
+        .rating-info { display: flex; align-items: center; gap: 15px; }
+        .rating-stars-big { font-size: 24px; color: var(--accent); }
         .rating-score { font-size: 22px; font-weight: 800; color: var(--text-main); line-height: 1; }
-        .rating-count { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        .rating-count { font-size: 12px; color: var(--text-muted); }
+        .btn-verify { background: #1e88e5; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: bold;}
 
         .master-tabs { display: flex; background-color: var(--bg-card); border-radius: 12px; padding: 4px; margin-bottom: 20px; }
         .master-tab { flex: 1; text-align: center; padding: 10px; border-radius: 10px; font-size: 14px; cursor: pointer; color: var(--text-muted); font-weight: 600; }
         .master-tab.active { background-color: var(--bg-input); color: white; }
 
-        .order-card { background-color: var(--bg-card); border-radius: 16px; padding: 18px; margin-bottom: 14px; border: 1px solid rgba(255,255,255,0.03); }
+        .order-card { background-color: var(--bg-card); border-radius: 16px; padding: 18px; margin-bottom: 14px; border: 1px solid rgba(255,255,255,0.03); position: relative; overflow: hidden; }
         .order-card.in-progress { border: 1px solid rgba(52, 199, 89, 0.3); }
+        .order-card.boosted::before { content: "⚡ VIP"; position: absolute; top: 0; right: 0; background: var(--accent); color: #000; font-size: 10px; font-weight: bold; padding: 4px 8px; border-bottom-left-radius: 8px; }
         .order-card h3 { margin: 0 0 10px 0; font-size: 18px; color: var(--text-main); }
         .order-card p { margin: 6px 0; font-size: 14px; color: var(--text-muted); }
         .order-price { font-size: 20px; font-weight: 800; color: var(--accent); margin: 10px 0 !important; }
@@ -127,26 +128,44 @@
         
         .action-buttons { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
         .btn-accept { background-color: var(--accent); color: #000; border: none; padding: 14px; border-radius: 12px; flex: 1; font-weight: 700; font-size: 15px; cursor: pointer; width: 100%; }
+        .btn-boost { background-color: rgba(255, 204, 0, 0.15); color: var(--accent); border: 1px solid var(--accent); padding: 12px; border-radius: 12px; font-weight: 600; font-size: 14px; cursor: pointer; width: 100%; margin-top: 8px; }
         
         .btn-contact { background-color: var(--bg-input); color: white; border: none; padding: 14px; border-radius: 12px; flex: 1; font-weight: 600; font-size: 14px; cursor: pointer; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .btn-call { background-color: #1e88e5; }
-        .btn-whatsapp { background-color: #25D366; }
-        .btn-map-route { background-color: var(--accent); color: #000; }
+        .btn-chat { background-color: var(--success); color: #000; }
+        .btn-map-route { background-color: #1e88e5; color: white; }
 
         .btn-complete { background-color: rgba(255, 59, 48, 0.15); color: var(--danger); border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 600; cursor: pointer; margin-top: 10px; }
-        
         .btn-edit-price { background-color: var(--bg-input); color: white; border: none; padding: 12px; border-radius: 12px; flex: 1; font-weight: 600; font-size: 14px; cursor: pointer; }
         .btn-delete-order { background-color: rgba(255, 59, 48, 0.1); color: var(--danger); border: 1px solid var(--danger); padding: 12px; border-radius: 12px; flex: 1; font-weight: 600; font-size: 14px; cursor: pointer; }
         
         .empty-state { text-align: center; color: var(--text-muted); margin-top: 30px; font-size: 15px; }
 
-        /* Регистрация */
+        /* Экран чата */
+        #view-chat { padding: 0; display: none; flex-direction: column; height: 100vh; position: fixed; top: 0; left: 0; width: 100%; background: var(--bg-body); z-index: 9000; }
+        #view-chat.active { display: flex; }
+        .chat-header { background: var(--bg-card); padding: 15px 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .chat-bubble { max-width: 80%; padding: 12px 16px; border-radius: 16px; font-size: 15px; line-height: 1.4; }
+        .chat-bubble.me { background-color: var(--accent); color: #000; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .chat-bubble.them { background-color: var(--chat-bubble); color: white; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .chat-bubble.system { background: none; color: var(--text-muted); font-size: 12px; align-self: center; text-align: center; }
+        .chat-input-area { padding: 15px; background: var(--bg-card); display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-bottom: 30px; }
+        .chat-input-area input { flex: 1; padding: 15px; border-radius: 24px; border: none; background: var(--bg-input); color: white; outline: none; }
+        .chat-send-btn { background: var(--accent); border: none; width: 50px; height: 50px; border-radius: 50%; color: #000; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        /* Регистрация и Онбординг */
         #view-register { padding-top: 30px; }
         .role-btn { background-color: var(--bg-card); border: 2px solid transparent; border-radius: 18px; padding: 24px; margin-bottom: 16px; text-align: center; cursor: pointer; }
         .role-btn:active, .role-btn.selected { border-color: var(--accent); background-color: rgba(255, 204, 0, 0.05); }
         .role-icon { font-size: 48px; margin-bottom: 12px; }
         .role-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
         .role-desc { font-size: 14px; color: var(--text-muted); }
+
+        /* Онбординг модалка */
+        #onboarding-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
+        .onboarding-icon { font-size: 80px; margin-bottom: 20px; }
+        .onboarding-title { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
+        .onboarding-text { color: var(--text-muted); font-size: 16px; margin-bottom: 30px; line-height: 1.5; }
 
         /* Нижнее меню */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 15, 17, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-around; padding: 12px 0 30px 0; z-index: 100; display: none; }
@@ -169,7 +188,6 @@
         .status-box { background-color: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3); border-radius: 12px; padding: 16px; margin-top: 12px; }
         .status-title { color: var(--success); font-size: 16px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
         
-        /* Модалки контент */
         .modal-content { background-color: var(--bg-card); padding: 24px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; }
         .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 15px; }
         .stars-container { display: flex; justify-content: center; gap: 10px; font-size: 40px; cursor: pointer; margin-bottom: 20px; }
@@ -196,12 +214,22 @@
 </head>
 <body>
 
+    <!-- ОНБОРДИНГ -->
+    <div id="onboarding-modal">
+        <div class="onboarding-icon">👋</div>
+        <div class="onboarding-title">Добро пожаловать в Sheber!</div>
+        <div class="onboarding-text">Мы соединяем клиентов и мастеров напрямую. Безопасно, быстро и удобно. Выберите роль, чтобы начать.</div>
+        <button class="btn-submit" onclick="closeOnboarding()">Понятно</button>
+    </div>
+
+    <!-- БОКОВОЕ МЕНЮ -->
     <div class="menu-overlay" id="menu-overlay" onclick="toggleMenu()"></div>
     <div id="side-menu">
         <div class="profile-info">
-            <div class="profile-name" id="menu-user-name">Гость</div>
+            <div class="profile-name" id="menu-user-name">Гость <span id="menu-verified-badge" class="verified-badge" style="display:none;">✔️</span></div>
             <div class="profile-role" id="menu-user-role">Роль: Клиент</div>
-            <div class="profile-rating" id="menu-master-rating" style="display: none;">⭐ <span id="menu-rating-val">5.0</span> <span style="color:var(--text-muted); font-size:12px; font-weight:normal;">(<span id="menu-rating-count">0</span>)</span></div>
+            <div id="menu-level-badge" class="level-badge level-bronze" style="display: none;">🥉 Новичок</div>
+            <div class="profile-rating" id="menu-master-rating" style="display: none; margin-top: 5px; color: var(--accent); font-weight: bold;">⭐ <span id="menu-rating-val">5.0</span> <span style="color:var(--text-muted); font-size:12px; font-weight:normal;">(<span id="menu-rating-count">0</span>)</span></div>
         </div>
         
         <button class="menu-item" id="menu-btn-history" onclick="switchTab('client-history')" style="display: none;">🕒 История заказов</button>
@@ -237,7 +265,7 @@
         <div id="client-reg-form" style="display: none;">
             <button class="back-btn" onclick="cancelReg()">← Назад</button>
             <div class="form-group">
-                <label>Ваш номер телефона (для связи с мастером)</label>
+                <label>Ваш номер телефона (для связи)</label>
                 <input type="tel" id="reg-client-phone" class="form-input" placeholder="+7 (777) 123-45-67">
             </div>
             <button class="btn-submit" onclick="completeRegistration('client')">Начать поиск</button>
@@ -253,6 +281,10 @@
                 <label>Ваш телефон</label>
                 <input type="tel" id="reg-master-phone" class="form-input" placeholder="+7 (777) 123-45-67">
             </div>
+            <div class="form-group">
+                <label>Опыт работы (лет)</label>
+                <input type="number" id="reg-master-exp" class="form-input" placeholder="Например: 5">
+            </div>
             <button class="btn-submit" onclick="completeRegistration('master')">Зарегистрироваться</button>
         </div>
     </div>
@@ -265,11 +297,7 @@
             <div class="card" onclick="openOrderForm('Сантехник')"><div class="icon-box">🔧</div><h3>Сантехник</h3><p>Краны, трубы, засоры</p></div>
             <div class="card" onclick="openOrderForm('Электрик')"><div class="icon-box">💡</div><h3>Электрик</h3><p>Проводка, свет, розетки</p></div>
             <div class="card" onclick="openOrderForm('Мастер на час')"><div class="icon-box">🛠️</div><h3>Мастер на час</h3><p>Мелкий ремонт</p></div>
-            <div class="card" onclick="openOrderForm('Авто')"><div class="icon-box">🚗</div><h3>Авто</h3><p>Автоэлектрик, помощь</p></div>
-            <div class="card" onclick="openOrderForm('Замки')"><div class="icon-box">🔑</div><h3>Замки</h3><p>Вскрытие, замена</p></div>
             <div class="card" onclick="openOrderForm('Клинер')"><div class="icon-box">🧹</div><h3>Клинер</h3><p>Уборка квартир</p></div>
-            <div class="card" onclick="openOrderForm('Ремонт техники')"><div class="icon-box">🔌</div><h3>Ремонт техники</h3><p>Стиралки, холодильники</p></div>
-            <div class="card" onclick="openOrderForm('Грузчик')"><div class="icon-box">📦</div><h3>Грузчик</h3><p>Переезды, помощь</p></div>
         </div>
     </div>
 
@@ -305,7 +333,7 @@
 
         <div class="form-group">
             <label>Город</label>
-            <select id="input-city" class="form-input">
+            <select id="input-city" class="form-select">
                 <option value="Астана">Астана</option>
                 <option value="Алматы">Алматы</option>
                 <option value="Шымкент">Шымкент</option>
@@ -326,7 +354,19 @@
         </div>
 
         <div class="form-group">
-            <label>Опишите проблему</label>
+            <label>Выберите услугу (Фиксированная цена)</label>
+            <select id="input-tariff" class="form-select" onchange="handleTariffChange()">
+                <!-- Заполняется через JS -->
+            </select>
+        </div>
+
+        <div class="form-group" id="custom-price-group" style="display: none;">
+            <label>Предлагаемая цена (₸)</label>
+            <input type="number" id="input-price" class="form-input" placeholder="Введите вашу цену">
+        </div>
+
+        <div class="form-group">
+            <label>Опишите проблему (детали)</label>
             <textarea id="input-desc" class="form-input" placeholder="Опишите, что случилось..."></textarea>
         </div>
 
@@ -337,11 +377,6 @@
             <img id="photo-preview">
         </div>
 
-        <div class="form-group">
-            <label>Предлагаемая цена (₸)</label>
-            <input type="number" id="input-price" class="form-input" placeholder="Например: 5000">
-        </div>
-
         <button class="btn-submit" onclick="submitOrder()">Опубликовать заказ</button>
     </div>
 
@@ -349,17 +384,19 @@
     <div id="view-master" class="container">
         <h1>Кабинет мастера</h1>
         
-        <!-- ВИДЖЕТ РЕЙТИНГА -->
         <div class="master-rating-widget">
-            <div class="rating-stars-big">★</div>
             <div class="rating-info">
-                <div class="rating-score" id="master-rating-score">5.0</div>
-                <div class="rating-count" id="master-rating-count">Нет оценок</div>
+                <div class="rating-stars-big">★</div>
+                <div>
+                    <div class="rating-score" id="master-rating-score">5.0</div>
+                    <div class="rating-count" id="master-rating-count">Нет оценок</div>
+                </div>
             </div>
+            <button class="btn-verify" id="btn-verify" onclick="verifyMaster()">Получить ✔️</button>
         </div>
 
         <div id="ban-alert" class="ban-alert">
-            ⛔ Вы временно заблокированы за низкий рейтинг.<br>
+            ⛔ Вы заблокированы за низкий рейтинг.<br>
             <span style="font-size: 12px; font-weight: normal; margin-top: 5px; display: block;">Заказы вернутся через: <span id="ban-timer">...</span></span>
         </div>
 
@@ -383,6 +420,19 @@
         </div>
         <h3 style="margin-top: 20px; margin-bottom: 10px;">Завершенные заказы</h3>
         <div id="master-finance-list"></div>
+    </div>
+
+    <!-- ЧАТ -->
+    <div id="view-chat">
+        <div class="chat-header">
+            <button class="back-btn" style="padding: 0; margin: 0;" onclick="closeChat()">←</button>
+            <div style="font-weight: bold; font-size: 18px;" id="chat-header-name">Чат с клиентом</div>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Написать сообщение..." onkeypress="handleChatEnter(event)">
+            <button class="chat-send-btn" onclick="sendChatMessage()">➤</button>
+        </div>
     </div>
 
     <!-- КАРТА -->
@@ -465,14 +515,33 @@
         let masterName = localStorage.getItem('sheber_master_name_' + MY_USER_ID) || 'Махсат';
         let masterPhone = localStorage.getItem('sheber_master_phone_' + MY_USER_ID) || '';
         let clientPhone = localStorage.getItem('sheber_client_phone_' + MY_USER_ID) || '';
-
+        
         let masterDB = JSON.parse(localStorage.getItem('sheber_master_db')) || {};
         
         let currentRatingOrderId = null;
         let currentRatingValue = 0;
         let currentEditingPriceOrderId = null;
+        let currentChatOrderId = null;
+        let chatInterval = null;
 
         const API_KEY_2GIS = "e15b258a-b886-448f-bae9-a067f639ec33";
+        
+        // Тарифы
+        const TARIFFS = {
+            'Сантехник': [ {name: 'Диагностика', price: 2000}, {name: 'Замена смесителя', price: 5000}, {name: 'Устранение засора', price: 4000}, {name: 'Свой вариант', price: 0} ],
+            'Электрик': [ {name: 'Диагностика', price: 2000}, {name: 'Замена розетки', price: 3000}, {name: 'Проводка (точка)', price: 5000}, {name: 'Свой вариант', price: 0} ],
+            'Мастер на час': [ {name: '1 час работы', price: 5000}, {name: '2 часа работы', price: 9000}, {name: 'Свой вариант', price: 0} ],
+            'Клинер': [ {name: 'Уборка 1-комн', price: 8000}, {name: 'Уборка 2-комн', price: 12000}, {name: 'Свой вариант', price: 0} ]
+        };
+
+        // Онбординг
+        if (!localStorage.getItem('onboarding_done')) {
+            document.getElementById('onboarding-modal').style.display = 'flex';
+        }
+        function closeOnboarding() {
+            localStorage.setItem('onboarding_done', 'true');
+            document.getElementById('onboarding-modal').style.display = 'none';
+        }
 
         function initApp() {
             if (!currentUserRole) {
@@ -481,7 +550,7 @@
                 document.getElementById('main-header').style.display = 'flex';
                 document.getElementById('main-nav').style.display = 'flex';
                 setupRoleUI(currentUserRole);
-                updateMasterRatingUI(); // Обновляем рейтинг при старте
+                updateMasterProfileUI();
             }
         }
 
@@ -491,36 +560,120 @@
             document.getElementById('menu-btn-history').style.display = 'none';
             document.getElementById('menu-btn-finance').style.display = 'none';
             document.getElementById('menu-master-rating').style.display = 'none';
+            document.getElementById('menu-level-badge').style.display = 'none';
+            document.getElementById('menu-verified-badge').style.display = 'none';
 
             if (role === 'master') {
                 document.getElementById('nav-master-block').style.display = 'flex';
                 document.getElementById('menu-btn-finance').style.display = 'flex';
-                document.getElementById('menu-master-rating').style.display = 'flex';
+                document.getElementById('menu-master-rating').style.display = 'block';
+                document.getElementById('menu-level-badge').style.display = 'inline-block';
                 switchTab('master');
             } else {
                 document.getElementById('nav-client-block').style.display = 'flex';
                 document.getElementById('menu-btn-history').style.display = 'flex';
                 switchTab('client-home');
             }
-            updateMasterRatingUI();
+            updateMasterProfileUI();
         }
 
-        // --- ОБНОВЛЕНИЕ РЕЙТИНГА ---
-        function updateMasterRatingUI() {
-            let myStats = masterDB[MY_USER_ID] || { total: 0, count: 0 };
-            let avg = myStats.count > 0 ? (myStats.total / myStats.count).toFixed(1) : "5.0";
-            let countText = myStats.count > 0 ? `(${myStats.count} оценок)` : "Нет оценок";
-            let countMenuText = myStats.count > 0 ? myStats.count : "0";
-
-            // В кабинете
+        // --- УРОВНИ И ВЕРИФИКАЦИЯ ---
+        function updateMasterProfileUI() {
+            let stats = masterDB[MY_USER_ID] || { total: 0, count: 0, completed: 0, isVerified: false };
+            let avg = stats.count > 0 ? (stats.total / stats.count).toFixed(1) : "5.0";
+            
+            // Рейтинг
             document.getElementById('master-rating-score').innerText = avg;
-            document.getElementById('master-rating-count').innerText = countText;
-
-            // В меню
+            document.getElementById('master-rating-count').innerText = stats.count > 0 ? `${stats.count} оценок` : "Нет оценок";
             document.getElementById('menu-rating-val').innerText = avg;
-            document.getElementById('menu-rating-count').innerText = countMenuText;
+            document.getElementById('menu-rating-count').innerText = stats.count;
+
+            // Верификация
+            const verifyBtn = document.getElementById('btn-verify');
+            if (stats.isVerified) {
+                document.getElementById('menu-verified-badge').style.display = 'inline';
+                verifyBtn.innerText = "✔️ Проверен";
+                verifyBtn.style.background = "rgba(30, 136, 229, 0.2)";
+                verifyBtn.style.color = "#1e88e5";
+                verifyBtn.disabled = true;
+            } else {
+                document.getElementById('menu-verified-badge').style.display = 'none';
+                verifyBtn.innerText = "Получить ✔️";
+                verifyBtn.disabled = false;
+            }
+
+            // Уровень (Геймификация)
+            const levelBadge = document.getElementById('menu-level-badge');
+            if (stats.completed >= 50) {
+                levelBadge.className = 'level-badge level-gold';
+                levelBadge.innerText = '🥇 Эксперт (комиссия 10%)';
+            } else if (stats.completed >= 11) {
+                levelBadge.className = 'level-badge level-silver';
+                levelBadge.innerText = '🥈 Профи (комиссия 15%)';
+            } else {
+                levelBadge.className = 'level-badge level-bronze';
+                levelBadge.innerText = '🥉 Новичок (комиссия 20%)';
+            }
         }
 
+        function verifyMaster() {
+            let stats = masterDB[MY_USER_ID] || { total: 0, count: 0, completed: 0, isVerified: false, blockedUntil: 0 };
+            stats.isVerified = true;
+            masterDB[MY_USER_ID] = stats;
+            localStorage.setItem('sheber_master_db', JSON.stringify(masterDB));
+            tg.showAlert("✅ Вы успешно верифицированы! Теперь клиенты видят галочку.");
+            updateMasterProfileUI();
+        }
+
+        // --- ЧАТ ---
+        function openChat(orderId, otherName) {
+            currentChatOrderId = orderId;
+            document.getElementById('chat-header-name').innerText = `Чат: ${otherName}`;
+            document.getElementById('view-chat').classList.add('active');
+            renderChat();
+            
+            // Симуляция получения сообщений
+            if(chatInterval) clearInterval(chatInterval);
+            chatInterval = setInterval(renderChat, 2000); 
+        }
+
+        function closeChat() {
+            document.getElementById('view-chat').classList.remove('active');
+            if(chatInterval) clearInterval(chatInterval);
+        }
+
+        function renderChat() {
+            if (!currentChatOrderId) return;
+            let chats = JSON.parse(localStorage.getItem('sheber_chats')) || {};
+            let msgs = chats[currentChatOrderId] || [];
+            
+            let container = document.getElementById('chat-messages');
+            container.innerHTML = msgs.map(m => `
+                <div class="chat-bubble ${m.sender === MY_USER_ID ? 'me' : 'them'}">${m.text}</div>
+            `).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function sendChatMessage() {
+            let input = document.getElementById('chat-input');
+            let text = input.value.trim();
+            if (!text || !currentChatOrderId) return;
+
+            let chats = JSON.parse(localStorage.getItem('sheber_chats')) || {};
+            if (!chats[currentChatOrderId]) chats[currentChatOrderId] = [];
+            
+            chats[currentChatOrderId].push({ sender: MY_USER_ID, text: text, time: Date.now() });
+            localStorage.setItem('sheber_chats', JSON.stringify(chats));
+            
+            input.value = '';
+            renderChat();
+        }
+
+        function handleChatEnter(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        }
+
+        // --- ОСТАЛЬНАЯ ЛОГИКА (Скопирована из предыдущей версии с улучшениями) ---
         function toggleMenu() {
             const menu = document.getElementById('side-menu');
             const overlay = document.getElementById('menu-overlay');
@@ -528,9 +681,9 @@
                 menu.classList.remove('open'); overlay.classList.remove('open');
             } else {
                 menu.classList.add('open'); overlay.classList.add('open');
-                document.getElementById('menu-user-name').innerText = currentUserRole === 'master' ? masterName : 'Клиент';
+                document.getElementById('menu-user-name').innerHTML = currentUserRole === 'master' ? `${masterName} <span id="menu-verified-badge" class="verified-badge" style="display:${masterDB[MY_USER_ID]?.isVerified ? 'inline' : 'none'};">✔️</span>` : 'Клиент';
                 document.getElementById('menu-user-role').innerText = currentUserRole === 'master' ? 'Роль: Мастер' : 'Роль: Клиент';
-                updateMasterRatingUI(); // Обновляем при открытии меню
+                updateMasterProfileUI();
             }
         }
 
@@ -594,6 +747,11 @@
                 masterPhone = inputPhone;
                 localStorage.setItem('sheber_master_name_' + MY_USER_ID, masterName);
                 localStorage.setItem('sheber_master_phone_' + MY_USER_ID, masterPhone);
+                
+                if(!masterDB[MY_USER_ID]) {
+                    masterDB[MY_USER_ID] = { total: 0, count: 0, completed: 0, isVerified: false, blockedUntil: 0 };
+                    localStorage.setItem('sheber_master_db', JSON.stringify(masterDB));
+                }
             } else {
                 const inputPhone = document.getElementById('reg-client-phone').value.trim();
                 if (inputPhone.length < 5) { tg.showAlert("Введите номер телефона!"); return; }
@@ -635,7 +793,7 @@
                 document.getElementById('view-master').classList.add('active');
                 document.getElementById('nav-master').classList.add('active');
                 checkBanStatus();
-                updateMasterRatingUI();
+                updateMasterProfileUI();
                 renderMasterOrders();
             } else if (tab === 'master-finance') {
                 document.getElementById('view-master-finance').classList.add('active');
@@ -664,7 +822,7 @@
 
         function checkBanStatus() {
             if (currentUserRole !== 'master') return;
-            let myStats = masterDB[MY_USER_ID] || { total: 0, count: 0, blockedUntil: 0 };
+            let myStats = masterDB[MY_USER_ID] || { blockedUntil: 0 };
             
             if (myStats.blockedUntil && Date.now() < myStats.blockedUntil) {
                 const daysLeft = Math.ceil((myStats.blockedUntil - Date.now()) / (1000 * 60 * 60 * 24));
@@ -679,7 +837,7 @@
                     myStats.count = 1;
                     masterDB[MY_USER_ID] = myStats;
                     localStorage.setItem('sheber_master_db', JSON.stringify(masterDB));
-                    updateMasterRatingUI();
+                    updateMasterProfileUI();
                 }
                 document.getElementById('ban-alert').style.display = 'none';
                 document.getElementById('status-btn').disabled = false;
@@ -766,16 +924,35 @@
             document.getElementById('form-title').innerText = "Заказ: " + category;
             document.getElementById('order-for-other').checked = false;
             togglePhoneInput();
+            
+            // Заполняем тарифы
+            const tariffSelect = document.getElementById('input-tariff');
+            tariffSelect.innerHTML = TARIFFS[category].map((t, i) => `<option value="${t.price}" data-index="${i}">${t.name} ${t.price > 0 ? '— ' + t.price + ' ₸' : ''}</option>`).join('');
+            handleTariffChange();
+
             document.getElementById('input-address').value = '';
             document.getElementById('input-entrance').value = '';
             document.getElementById('input-apt').value = '';
             document.getElementById('input-intercom').value = '';
             document.getElementById('input-desc').value = '';
-            document.getElementById('input-price').value = '';
             document.getElementById('input-photo').value = '';
             uploadedPhotoBase64 = null;
             document.getElementById('photo-preview').style.display = 'none';
             document.querySelector('.btn-upload').innerText = "📷 Прикрепить фото";
+        }
+
+        function handleTariffChange() {
+            const select = document.getElementById('input-tariff');
+            const selectedOption = select.options[select.selectedIndex];
+            const price = parseInt(selectedOption.value);
+            
+            if (price === 0) {
+                document.getElementById('custom-price-group').style.display = 'block';
+                document.getElementById('input-price').value = '';
+            } else {
+                document.getElementById('custom-price-group').style.display = 'none';
+                document.getElementById('input-price').value = price;
+            }
         }
 
         function togglePhoneInput() {
@@ -793,7 +970,7 @@
 
             const address = document.getElementById('input-address').value;
             const price = document.getElementById('input-price').value;
-            if (!address || !price) { tg.showAlert("Заполните адрес и цену!"); return; }
+            if (!address || !price || price <= 0) { tg.showAlert("Заполните адрес и корректную цену!"); return; }
 
             let fullAddress = `${document.getElementById('input-city').value}, ${address}`;
             let details = [];
@@ -805,7 +982,7 @@
             const newOrder = {
                 id: Date.now().toString(), clientId: MY_USER_ID, category: currentCategory,
                 phone: phone, address: fullAddress, desc: document.getElementById('input-desc').value, price: price,
-                photo: uploadedPhotoBase64,
+                photo: uploadedPhotoBase64, isBoosted: false,
                 status: 'searching', masterId: null, masterName: null, masterPhone: null,
                 createdAt: Date.now()
             };
@@ -841,24 +1018,21 @@
                         </div>
                     `;
                 } else if (order.status === 'accepted') {
-                    let cleanMasterPhone = order.masterPhone.replace(/\D/g,'');
                     let waText = `Здравствуйте, ${order.masterName}! Я по поводу заказа на Sheber (${order.category}).`;
-                    let waLink = `https://wa.me/${cleanMasterPhone}?text=${encodeURIComponent(waText)}`;
-                    
-                    // Достаем рейтинг мастера
-                    let mStats = masterDB[order.masterId] || { total: 0, count: 0 };
+                    let mStats = masterDB[order.masterId] || { total: 0, count: 0, completed: 0 };
                     let mAvg = mStats.count > 0 ? (mStats.total / mStats.count).toFixed(1) : "5.0";
+                    let mLevel = mStats.completed >= 50 ? '🥇' : (mStats.completed >= 11 ? '🥈' : '🥉');
 
                     statusHtml = `
                         <div class="status-box">
                             <div class="status-title">✅ Мастер едет к вам!</div>
                             <div class="status-desc" style="margin-bottom: 10px;">
-                                <b>Мастер:</b> ${order.masterName} <span style="color:var(--accent);">⭐ ${mAvg}</span><br>
+                                <b>Мастер:</b> ${order.masterName} ${mLevel} <span style="color:var(--accent);">⭐ ${mAvg}</span><br>
                                 <b>Телефон:</b> ${order.masterPhone}
                             </div>
                             <div class="action-buttons" style="margin-top: 5px;">
-                                <a href="tel:+${cleanMasterPhone}" class="btn-contact btn-call" style="padding: 10px; font-size: 13px;">📞 Позвонить</a>
-                                <a href="${waLink}" target="_blank" class="btn-contact btn-whatsapp" style="padding: 10px; font-size: 13px;">💬 WhatsApp</a>
+                                <button class="btn-contact btn-chat" onclick="openChat('${order.id}', '${order.masterName}')">💬 Чат</button>
+                                <a href="tel:+${order.masterPhone.replace(/\D/g,'')}" class="btn-contact btn-map-route" style="background:#1e88e5;">📞 Позвонить</a>
                             </div>
                         </div>
                     `;
@@ -955,17 +1129,17 @@
             const order = savedOrders.find(o => o.id === currentRatingOrderId);
             if (!order) return;
 
-            let masterStats = masterDB[order.masterId] || { total: 0, count: 0, blockedUntil: 0 };
-            masterStats.total += currentRatingValue;
-            masterStats.count += 1;
+            let stats = masterDB[order.masterId] || { total: 0, count: 0, completed: 0, isVerified: false, blockedUntil: 0 };
+            stats.total += currentRatingValue;
+            stats.count += 1;
             
-            let avgRating = masterStats.total / masterStats.count;
+            let avgRating = stats.total / stats.count;
             
-            if (avgRating < 3.5 && masterStats.count >= 2) {
-                masterStats.blockedUntil = Date.now() + 10 * 24 * 60 * 60 * 1000;
+            if (avgRating < 3.5 && stats.count >= 2) {
+                stats.blockedUntil = Date.now() + 10 * 24 * 60 * 60 * 1000;
             }
             
-            masterDB[order.masterId] = masterStats;
+            masterDB[order.masterId] = stats;
             localStorage.setItem('sheber_master_db', JSON.stringify(masterDB));
 
             savedOrders = savedOrders.map(o => o.id === currentRatingOrderId ? {...o, ratedByClient: true} : o);
@@ -986,7 +1160,10 @@
             const newList = document.getElementById('new-orders-list');
             const activeList = document.getElementById('active-orders-list');
 
-            const newOrders = availableForMe.filter(o => o.status === 'searching');
+            // Сортировка: сначала бустантые
+            let newOrders = availableForMe.filter(o => o.status === 'searching');
+            newOrders.sort((a, b) => (b.isBoosted === true) - (a.isBoosted === true));
+
             const activeOrders = availableForMe.filter(o => o.status === 'accepted' && o.masterId === MY_USER_ID);
 
             let myStats = masterDB[MY_USER_ID];
@@ -999,12 +1176,13 @@
                     newList.innerHTML = `<div class="empty-state">Нет новых заказов.</div>`;
                 } else {
                     newList.innerHTML = newOrders.map(order => `
-                        <div class="order-card">
+                        <div class="order-card ${order.isBoosted ? 'boosted' : ''}">
                             <h3>${order.category} <span style="float:right; color:var(--accent)">${order.price} ₸</span></h3>
                             ${order.photo ? `<img src="${order.photo}" class="order-photo">` : ''}
                             <p>📍 ${order.address}</p>
                             <p>📝 ${order.desc || 'Без описания'}</p>
                             <button class="btn-accept" style="margin-top:12px;" onclick="acceptOrder('${order.id}')">Принять заказ</button>
+                            ${!order.isBoosted ? `<button class="btn-boost" onclick="boostOrder('${order.id}')">⚡ Поднять в топ (симуляция)</button>` : ''}
                         </div>
                     `).join('');
                 }
@@ -1014,11 +1192,9 @@
                 activeList.innerHTML = `<div class="empty-state">У вас нет заказов в работе</div>`;
             } else {
                 activeList.innerHTML = activeOrders.map(order => {
-                    let cleanPhone = order.phone.replace(/\D/g,''); 
                     let encodedAddress = encodeURIComponent(order.address.split('(')[0]); 
                     let waText = `Здравствуйте! Меня зовут ${masterName}, я ваш мастер из сервиса Sheber. Принял ваш заказ на «${order.category}». Уже выезжаю.`;
-                    let waLink = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waText)}`;
-
+                    
                     return `
                     <div class="order-card in-progress">
                         <h3>${order.category} <span style="float:right; color:var(--accent)">${order.price} ₸</span></h3>
@@ -1026,8 +1202,8 @@
                         <p>📍 ${order.address}</p>
                         <p>📞 ${order.phone}</p>
                         <div class="action-buttons" style="margin-top: 15px;">
-                            <a href="tel:+${cleanPhone}" class="btn-contact btn-call">📞 Позвонить</a>
-                            <a href="${waLink}" target="_blank" class="btn-contact btn-whatsapp">💬 WhatsApp</a>
+                            <button class="btn-contact btn-chat" onclick="openChat('${order.id}', 'Клиент')">💬 Чат</button>
+                            <a href="tel:+${order.phone.replace(/\D/g,'')}" class="btn-contact btn-call">📞 Позвонить</a>
                         </div>
                         <div class="action-buttons" style="margin-top: 8px;">
                             <a href="https://2gis.kz/search/${encodedAddress}" target="_blank" class="btn-contact btn-map-route" style="width: 100%;">🗺️ Маршрут в 2ГИС</a>
@@ -1039,9 +1215,17 @@
             }
         }
 
+        function boostOrder(orderId) {
+            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
+            savedOrders = savedOrders.map(o => o.id === orderId ? {...o, isBoosted: true} : o);
+            localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders));
+            tg.showAlert("⚡ Заказ поднят в топ! (Демонстрация платной услуги)");
+            renderMasterOrders();
+        }
+
         function acceptOrder(orderId) {
-            let myStats = masterDB[MY_USER_ID];
-            if (myStats && myStats.blockedUntil > Date.now()) {
+            let stats = masterDB[MY_USER_ID];
+            if (stats && stats.blockedUntil > Date.now()) {
                 tg.showAlert("Вы временно заблокированы за низкий рейтинг."); return;
             }
 
@@ -1062,6 +1246,16 @@
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
             savedOrders = savedOrders.map(o => o.id === orderId ? {...o, status: 'completed', completedAt: Date.now()} : o);
             localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders));
+            
+            // Обновляем счетчик выполненных заказов для уровня
+            let stats = masterDB[MY_USER_ID];
+            if (stats) {
+                stats.completed = (stats.completed || 0) + 1;
+                masterDB[MY_USER_ID] = stats;
+                localStorage.setItem('sheber_master_db', JSON.stringify(masterDB));
+            }
+            updateMasterProfileUI();
+
             tg.showAlert("✅ Заказ завершен! Клиент может оставить отзыв.");
             renderMasterOrders();
         }
