@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sheber v2.0</title>
+    <title>Sheber v2.1</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://mapgl.2gis.com/api/js/v1"></script>
     <style>
@@ -120,6 +120,7 @@
 
         .order-card { background-color: var(--bg-card); border-radius: 16px; padding: 18px; margin-bottom: 14px; border: 1px solid rgba(255,255,255,0.03); position: relative; overflow: hidden; }
         .order-card.in-progress { border: 1px solid rgba(52, 199, 89, 0.3); }
+        .order-card.boosted { border: 1px solid var(--accent); }
         .order-card.boosted::before { content: "⚡ VIP"; position: absolute; top: 0; right: 0; background: var(--accent); color: #000; font-size: 10px; font-weight: bold; padding: 4px 8px; border-bottom-left-radius: 8px; }
         .order-card h3 { margin: 0 0 10px 0; font-size: 18px; color: var(--text-main); }
         .order-card p { margin: 6px 0; font-size: 14px; color: var(--text-muted); }
@@ -128,7 +129,6 @@
         
         .action-buttons { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
         .btn-accept { background-color: var(--accent); color: #000; border: none; padding: 14px; border-radius: 12px; flex: 1; font-weight: 700; font-size: 15px; cursor: pointer; width: 100%; }
-        .btn-boost { background-color: rgba(255, 204, 0, 0.15); color: var(--accent); border: 1px solid var(--accent); padding: 12px; border-radius: 12px; font-weight: 600; font-size: 14px; cursor: pointer; width: 100%; margin-top: 8px; }
         
         .btn-contact { background-color: var(--bg-input); color: white; border: none; padding: 14px; border-radius: 12px; flex: 1; font-weight: 600; font-size: 14px; cursor: pointer; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-chat { background-color: var(--success); color: #000; }
@@ -281,10 +281,6 @@
                 <label>Ваш телефон</label>
                 <input type="tel" id="reg-master-phone" class="form-input" placeholder="+7 (777) 123-45-67">
             </div>
-            <div class="form-group">
-                <label>Опыт работы (лет)</label>
-                <input type="number" id="reg-master-exp" class="form-input" placeholder="Например: 5">
-            </div>
             <button class="btn-submit" onclick="completeRegistration('master')">Зарегистрироваться</button>
         </div>
     </div>
@@ -363,6 +359,15 @@
         <div class="form-group" id="custom-price-group" style="display: none;">
             <label>Предлагаемая цена (₸)</label>
             <input type="number" id="input-price" class="form-input" placeholder="Введите вашу цену">
+        </div>
+
+        <!-- ТУМБЛЕР VIP (ТЕПЕРЬ ДЛЯ КЛИЕНТА) -->
+        <div class="switch-container" style="border-color: rgba(255, 204, 0, 0.5);">
+            <span class="switch-label" style="color: var(--accent);">⚡ Ускорить поиск (+500 ₸)</span>
+            <label class="switch">
+                <input type="checkbox" id="order-vip">
+                <span class="slider"></span>
+            </label>
         </div>
 
         <div class="form-group">
@@ -577,18 +582,15 @@
             updateMasterProfileUI();
         }
 
-        // --- УРОВНИ И ВЕРИФИКАЦИЯ ---
         function updateMasterProfileUI() {
             let stats = masterDB[MY_USER_ID] || { total: 0, count: 0, completed: 0, isVerified: false };
             let avg = stats.count > 0 ? (stats.total / stats.count).toFixed(1) : "5.0";
             
-            // Рейтинг
             document.getElementById('master-rating-score').innerText = avg;
             document.getElementById('master-rating-count').innerText = stats.count > 0 ? `${stats.count} оценок` : "Нет оценок";
             document.getElementById('menu-rating-val').innerText = avg;
             document.getElementById('menu-rating-count').innerText = stats.count;
 
-            // Верификация
             const verifyBtn = document.getElementById('btn-verify');
             if (stats.isVerified) {
                 document.getElementById('menu-verified-badge').style.display = 'inline';
@@ -602,7 +604,6 @@
                 verifyBtn.disabled = false;
             }
 
-            // Уровень (Геймификация)
             const levelBadge = document.getElementById('menu-level-badge');
             if (stats.completed >= 50) {
                 levelBadge.className = 'level-badge level-gold';
@@ -632,7 +633,6 @@
             document.getElementById('view-chat').classList.add('active');
             renderChat();
             
-            // Симуляция получения сообщений
             if(chatInterval) clearInterval(chatInterval);
             chatInterval = setInterval(renderChat, 2000); 
         }
@@ -673,7 +673,7 @@
             if (e.key === 'Enter') sendChatMessage();
         }
 
-        // --- ОСТАЛЬНАЯ ЛОГИКА (Скопирована из предыдущей версии с улучшениями) ---
+        // --- ОСТАЛЬНАЯ ЛОГИКА ---
         function toggleMenu() {
             const menu = document.getElementById('side-menu');
             const overlay = document.getElementById('menu-overlay');
@@ -923,9 +923,9 @@
             switchTab('order-form');
             document.getElementById('form-title').innerText = "Заказ: " + category;
             document.getElementById('order-for-other').checked = false;
+            document.getElementById('order-vip').checked = false; // Сброс VIP
             togglePhoneInput();
             
-            // Заполняем тарифы
             const tariffSelect = document.getElementById('input-tariff');
             tariffSelect.innerHTML = TARIFFS[category].map((t, i) => `<option value="${t.price}" data-index="${i}">${t.name} ${t.price > 0 ? '— ' + t.price + ' ₸' : ''}</option>`).join('');
             handleTariffChange();
@@ -970,6 +970,8 @@
 
             const address = document.getElementById('input-address').value;
             const price = document.getElementById('input-price').value;
+            const isBoosted = document.getElementById('order-vip').checked; // Получаем статус VIP
+            
             if (!address || !price || price <= 0) { tg.showAlert("Заполните адрес и корректную цену!"); return; }
 
             let fullAddress = `${document.getElementById('input-city').value}, ${address}`;
@@ -982,7 +984,7 @@
             const newOrder = {
                 id: Date.now().toString(), clientId: MY_USER_ID, category: currentCategory,
                 phone: phone, address: fullAddress, desc: document.getElementById('input-desc').value, price: price,
-                photo: uploadedPhotoBase64, isBoosted: false,
+                photo: uploadedPhotoBase64, isBoosted: isBoosted, // Сохраняем VIP
                 status: 'searching', masterId: null, masterName: null, masterPhone: null,
                 createdAt: Date.now()
             };
@@ -991,7 +993,7 @@
             savedOrders.push(newOrder); 
             localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders)); 
 
-            tg.showAlert(`✅ Заказ опубликован!`);
+            tg.showAlert(`✅ Заказ опубликован! ${isBoosted ? 'Заказ помечен как VIP.' : ''}`);
             switchTab('client-orders');
         }
 
@@ -1008,6 +1010,7 @@
             list.innerHTML = myOrders.map(order => {
                 let statusHtml = '';
                 let actionHtml = '';
+                let vipBadge = order.isBoosted ? `<span style="color:var(--accent); font-size: 12px; margin-left: 10px;">⚡ VIP</span>` : '';
 
                 if (order.status === 'searching') {
                     statusHtml = `<p style="color: var(--accent); font-weight: 600; margin-top: 12px;">⏳ Ищем мастера...</p>`;
@@ -1018,7 +1021,6 @@
                         </div>
                     `;
                 } else if (order.status === 'accepted') {
-                    let waText = `Здравствуйте, ${order.masterName}! Я по поводу заказа на Sheber (${order.category}).`;
                     let mStats = masterDB[order.masterId] || { total: 0, count: 0, completed: 0 };
                     let mAvg = mStats.count > 0 ? (mStats.total / mStats.count).toFixed(1) : "5.0";
                     let mLevel = mStats.completed >= 50 ? '🥇' : (mStats.completed >= 11 ? '🥈' : '🥉');
@@ -1039,8 +1041,8 @@
                 }
 
                 return `
-                <div class="order-card ${order.status === 'accepted' ? 'in-progress' : ''}">
-                    <h3>${order.category} <span style="float:right; color:var(--accent)">${order.price} ₸</span></h3>
+                <div class="order-card ${order.status === 'accepted' ? 'in-progress' : ''} ${order.isBoosted ? 'boosted' : ''}">
+                    <h3>${order.category} ${vipBadge} <span style="float:right; color:var(--accent)">${order.price} ₸</span></h3>
                     ${order.photo ? `<img src="${order.photo}" class="order-photo">` : ''}
                     <p>📍 ${order.address}</p>
                     ${statusHtml}
@@ -1182,7 +1184,6 @@
                             <p>📍 ${order.address}</p>
                             <p>📝 ${order.desc || 'Без описания'}</p>
                             <button class="btn-accept" style="margin-top:12px;" onclick="acceptOrder('${order.id}')">Принять заказ</button>
-                            ${!order.isBoosted ? `<button class="btn-boost" onclick="boostOrder('${order.id}')">⚡ Поднять в топ (симуляция)</button>` : ''}
                         </div>
                     `).join('');
                 }
@@ -1193,7 +1194,6 @@
             } else {
                 activeList.innerHTML = activeOrders.map(order => {
                     let encodedAddress = encodeURIComponent(order.address.split('(')[0]); 
-                    let waText = `Здравствуйте! Меня зовут ${masterName}, я ваш мастер из сервиса Sheber. Принял ваш заказ на «${order.category}». Уже выезжаю.`;
                     
                     return `
                     <div class="order-card in-progress">
@@ -1213,14 +1213,6 @@
                     `;
                 }).join('');
             }
-        }
-
-        function boostOrder(orderId) {
-            let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
-            savedOrders = savedOrders.map(o => o.id === orderId ? {...o, isBoosted: true} : o);
-            localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders));
-            tg.showAlert("⚡ Заказ поднят в топ! (Демонстрация платной услуги)");
-            renderMasterOrders();
         }
 
         function acceptOrder(orderId) {
@@ -1247,7 +1239,6 @@
             savedOrders = savedOrders.map(o => o.id === orderId ? {...o, status: 'completed', completedAt: Date.now()} : o);
             localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders));
             
-            // Обновляем счетчик выполненных заказов для уровня
             let stats = masterDB[MY_USER_ID];
             if (stats) {
                 stats.completed = (stats.completed || 0) + 1;
