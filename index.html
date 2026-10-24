@@ -32,10 +32,7 @@
             padding: 15px 20px; background-color: var(--bg-body);
             position: sticky; top: 0; z-index: 50;
         }
-        .hamburger-btn {
-            background: none; border: none; color: white; font-size: 26px;
-            cursor: pointer; padding: 0; display: flex; align-items: center;
-        }
+        .hamburger-btn { background: none; border: none; color: white; font-size: 26px; cursor: pointer; padding: 0; }
         .header-title { font-size: 18px; font-weight: 700; margin: 0; }
 
         /* --- БОКОВОЕ МЕНЮ --- */
@@ -46,15 +43,12 @@
             display: flex; flex-direction: column;
         }
         #side-menu.open { left: 0; }
-        .menu-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 999; backdrop-filter: blur(2px);
-        }
+        .menu-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; backdrop-filter: blur(2px); }
         .menu-overlay.open { display: block; }
         
         .profile-info { padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
         .profile-name { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-        .profile-role { color: var(--accent); font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .profile-role { color: var(--accent); font-size: 14px; font-weight: 600; text-transform: uppercase; }
         
         .menu-item {
             display: flex; align-items: center; gap: 12px; padding: 16px;
@@ -162,15 +156,25 @@
 
         .status-box { background-color: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3); border-radius: 12px; padding: 16px; margin-top: 12px; }
         .status-title { color: var(--success); font-size: 16px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+        
+        /* Переключатель (Заказ для другого) */
+        .switch-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; background-color: var(--bg-card); padding: 16px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.05); }
+        .switch-label { font-size: 15px; font-weight: 500; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #555; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(22px); }
     </style>
 </head>
 <body>
 
-    <!-- БОКОВОЕ МЕНЮ (ГАМБУРГЕР) -->
+    <!-- БОКОВОЕ МЕНЮ -->
     <div class="menu-overlay" id="menu-overlay" onclick="toggleMenu()"></div>
     <div id="side-menu">
         <div class="profile-info">
-            <div class="profile-name" id="menu-user-name">Махсат</div>
+            <div class="profile-name" id="menu-user-name">Гость</div>
             <div class="profile-role" id="menu-user-role">Роль: Клиент</div>
         </div>
         <button class="menu-item" onclick="resetRole()">🔄 Сменить роль</button>
@@ -181,7 +185,7 @@
     <div class="top-header" id="main-header" style="display: none;">
         <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
         <h2 class="header-title">Sheber</h2>
-        <div style="width: 26px;"></div> <!-- Заглушка для центрирования -->
+        <div style="width: 26px;"></div>
     </div>
 
     <!-- ЭКРАН РЕГИСТРАЦИИ -->
@@ -243,8 +247,17 @@
         <button class="back-btn" onclick="switchTab('client-home')">← Назад</button>
         <h1 id="form-title" style="margin-bottom: 24px;">Заказ: Сантехник</h1>
         
-        <div class="form-group">
-            <label>Ваш номер телефона</label>
+        <!-- Переключатель: Для себя / Для другого -->
+        <div class="switch-container">
+            <span class="switch-label">Заказ для другого человека?</span>
+            <label class="switch">
+                <input type="checkbox" id="order-for-other" onchange="togglePhoneInput()">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="form-group" id="phone-group" style="display: none;">
+            <label>Номер телефона (получателя услуги)</label>
             <input type="tel" id="input-phone" class="form-input" placeholder="+7 (777) 123-45-67">
         </div>
 
@@ -293,7 +306,6 @@
     <!-- КАБИНЕТ МАСТЕРА -->
     <div id="view-master" class="container">
         <h1>Кабинет мастера</h1>
-        
         <button id="status-btn" class="toggle-btn" style="margin-top: 20px;" onclick="toggleOnlineStatus()">🔴 Я офлайн (Нажмите, чтобы выйти)</button>
         
         <div class="master-tabs">
@@ -340,18 +352,23 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         
+        // ВКЛЮЧЕНО ДЛЯ ТЕСТА (на 2 аккаунтах будет работать)
         const TEST_MODE = true; 
+        
         const MY_USER_ID = tg.initDataUnsafe?.user?.id || 'test_' + Math.floor(Math.random() * 1000);
-        let currentUserRole = localStorage.getItem('sheber_role') || null; 
+        const MY_TG_PHONE = "+7 (777) 000-00-00"; // Заглушка, так как Telegram не отдает номер без запроса
+
+        let currentUserRole = localStorage.getItem('sheber_role_' + MY_USER_ID) || null; 
         let currentCategory = "";
         let isMasterOnline = false;
         let currentMasterTab = 'new';
         let map = null;
         let uploadedPhotoBase64 = null;
         
-        // Имя мастера для WhatsApp (по умолчанию Махсат)
-        let masterName = localStorage.getItem('sheber_master_name') || 'Махсат';
-        
+        // Данные мастера
+        let masterName = localStorage.getItem('sheber_master_name_' + MY_USER_ID) || 'Махсат';
+        let masterPhone = localStorage.getItem('sheber_master_phone_' + MY_USER_ID) || '';
+
         const API_KEY_2GIS = "e15b258a-b886-448f-bae9-a067f639ec33";
 
         // --- УПРАВЛЕНИЕ МЕНЮ ---
@@ -365,8 +382,6 @@
             } else {
                 menu.classList.add('open');
                 overlay.classList.add('open');
-                
-                // Обновляем инфу в меню
                 document.getElementById('menu-user-name').innerText = currentUserRole === 'master' ? masterName : 'Клиент';
                 document.getElementById('menu-user-role').innerText = currentUserRole === 'master' ? 'Роль: Мастер' : 'Роль: Клиент';
             }
@@ -375,10 +390,8 @@
         function resetRole() {
             toggleMenu();
             if(confirm("Сменить роль? (Вернемся на экран выбора)")) {
-                localStorage.removeItem('sheber_role');
-                localStorage.removeItem('sheber_master_name');
+                localStorage.removeItem('sheber_role_' + MY_USER_ID);
                 currentUserRole = null;
-                masterName = "Махсат";
                 document.getElementById('reg-master-name').value = '';
                 document.getElementById('reg-master-phone').value = '';
                 document.getElementById('role-selection').style.display = 'block';
@@ -403,6 +416,18 @@
         }
         applyPhoneMask(document.getElementById('input-phone'));
         applyPhoneMask(document.getElementById('reg-master-phone'));
+
+        // --- ПЕРЕКЛЮЧАТЕЛЬ ТЕЛЕФОНА В ФОРМЕ ---
+        function togglePhoneInput() {
+            const isChecked = document.getElementById('order-for-other').checked;
+            const phoneGroup = document.getElementById('phone-group');
+            if (isChecked) {
+                phoneGroup.style.display = 'block';
+            } else {
+                phoneGroup.style.display = 'none';
+                document.getElementById('input-phone').value = ''; // Очищаем, будем брать системный
+            }
+        }
 
         // --- РЕГИСТРАЦИЯ ---
         function initApp() {
@@ -449,13 +474,17 @@
 
         function completeRegistration(role) {
             currentUserRole = role;
-            localStorage.setItem('sheber_role', role);
+            localStorage.setItem('sheber_role_' + MY_USER_ID, role);
             
-            // Если это мастер, сохраняем его имя
             if (role === 'master') {
                 const inputName = document.getElementById('reg-master-name').value.trim();
+                const inputPhone = document.getElementById('reg-master-phone').value.trim();
+                
                 masterName = inputName ? inputName : 'Махсат';
-                localStorage.setItem('sheber_master_name', masterName);
+                masterPhone = inputPhone; // Номер жестко привязан
+                
+                localStorage.setItem('sheber_master_name_' + MY_USER_ID, masterName);
+                localStorage.setItem('sheber_master_phone_' + MY_USER_ID, masterPhone);
             }
 
             tg.HapticFeedback.notificationOccurred('success');
@@ -586,7 +615,11 @@
             currentCategory = category;
             switchTab('order-form');
             document.getElementById('form-title').innerText = "Заказ: " + category;
-            document.getElementById('input-phone').value = '+7 ';
+            
+            // Сбрасываем переключатель
+            document.getElementById('order-for-other').checked = false;
+            togglePhoneInput();
+
             document.getElementById('input-address').value = '';
             document.getElementById('input-entrance').value = '';
             document.getElementById('input-apt').value = '';
@@ -600,7 +633,20 @@
         }
 
         function submitOrder() {
-            const phone = document.getElementById('input-phone').value;
+            let phone = "";
+            const isForOther = document.getElementById('order-for-other').checked;
+
+            if (isForOther) {
+                phone = document.getElementById('input-phone').value;
+                if (phone.length < 5) {
+                    tg.showAlert("Введите номер телефона получателя!");
+                    return;
+                }
+            } else {
+                phone = "Номер из Telegram"; // Заглушка
+                // В реальном приложении здесь будет номер из Telegram
+            }
+
             const city = document.getElementById('input-city').value;
             const address = document.getElementById('input-address').value;
             const entrance = document.getElementById('input-entrance').value;
@@ -609,8 +655,8 @@
             const desc = document.getElementById('input-desc').value;
             const price = document.getElementById('input-price').value;
 
-            if (phone.length < 5 || !address || !price) {
-                tg.showAlert("Заполните телефон, адрес и цену!");
+            if (!address || !price) {
+                tg.showAlert("Заполните адрес и цену!");
                 return;
             }
 
@@ -651,11 +697,22 @@
                 if (order.status === 'searching') {
                     statusHtml = `<p style="color: var(--accent); font-weight: 600; margin-top: 12px;">⏳ Ищем мастера...</p>`;
                 } else if (order.status === 'accepted') {
+                    let cleanMasterPhone = order.masterPhone.replace(/\D/g,'');
+                    let waText = `Здравствуйте, ${order.masterName}! Я по поводу заказа на Sheber (${order.category}).`;
+                    let waLink = `https://wa.me/${cleanMasterPhone}?text=${encodeURIComponent(waText)}`;
+
                     statusHtml = `
                         <div class="status-box">
                             <div class="status-title">✅ Мастер едет к вам!</div>
-                            <div class="status-desc">Мастер: ${order.masterName}</div>
-                            <button class="btn-submit" style="padding: 10px; font-size: 14px; margin-top: 10px;" onclick="showClientTrackingMap()">📍 Посмотреть на карте</button>
+                            <div class="status-desc" style="margin-bottom: 10px;">
+                                <b>Мастер:</b> ${order.masterName}<br>
+                                <b>Телефон:</b> ${order.masterPhone}
+                            </div>
+                            <div class="action-buttons" style="margin-top: 5px;">
+                                <a href="tel:+${cleanMasterPhone}" class="btn-contact btn-call" style="padding: 10px; font-size: 13px;">📞 Позвонить</a>
+                                <a href="${waLink}" target="_blank" class="btn-contact btn-whatsapp" style="padding: 10px; font-size: 13px;">💬 WhatsApp</a>
+                            </div>
+                            <button class="btn-submit" style="padding: 10px; font-size: 14px; margin-top: 10px; background-color: var(--bg-input); color: white;" onclick="showClientTrackingMap()">📍 Посмотреть на карте</button>
                         </div>
                     `;
                 }
@@ -677,6 +734,8 @@
 
         function renderMasterOrders() {
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
+            
+            // Фильтрация: не показываем мастеру его же заказы (если он их создавал как клиент)
             const availableForMe = TEST_MODE ? savedOrders : savedOrders.filter(o => o.clientId !== MY_USER_ID);
 
             const newList = document.getElementById('new-orders-list');
@@ -706,7 +765,6 @@
                     let cleanPhone = order.phone.replace(/\D/g,''); 
                     let encodedAddress = encodeURIComponent(order.address.split('(')[0]); 
                     
-                    // ФОРМИРУЕМ КРАСИВОЕ СООБЩЕНИЕ ДЛЯ WHATSAPP
                     let waText = `Здравствуйте! Меня зовут ${masterName}, я ваш мастер из сервиса Sheber. Принял ваш заказ на «${order.category}». Уже выезжаю. Если есть уточнения по адресу, напишите здесь, пожалуйста.`;
                     let waLink = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waText)}`;
 
@@ -734,7 +792,6 @@
 
         function acceptOrder(orderId) {
             let savedOrders = JSON.parse(localStorage.getItem('sheber_orders_global')) || [];
-            const masterPhone = document.getElementById('reg-master-phone')?.value || "";
 
             savedOrders = savedOrders.map(o => o.id === orderId ? {...o, status: 'accepted', masterId: MY_USER_ID, masterName: masterName, masterPhone: masterPhone} : o);
             localStorage.setItem('sheber_orders_global', JSON.stringify(savedOrders));
